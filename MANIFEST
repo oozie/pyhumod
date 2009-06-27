@@ -1,0 +1,10 @@
+MANIFEST
+LICENSE
+setup.py
+conf/humod
+humod/__init__.py
+humod/actions.py
+humod/at_commands.py
+humod/detect.py
+humod/errors.py
+humod/humodem.py

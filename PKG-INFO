@@ -1,0 +1,13 @@
+Metadata-Version: 1.0
+Name: humod
+Version: 0.01-beta
+Summary: Python interface to Huawei modems.
+Home-page: http://pyhumod.googlecode.com/
+Author: Slawek Ligus
+Author-email: root@ooz.ie
+License: BSD
+Description: A Python package that talks to Huawei (and compatible) modems.
+Platform: Linux
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Natural Language :: English
+Classifier: Operating System :: POSIX :: Linux
