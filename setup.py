@@ -48,5 +48,4 @@ setup(name='pyhumod',
       data_files=[('/etc/ppp/peers',['conf/humod'])],
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
-                   'Operating System :: POSIX :: Linux',
-                   ])
+                   'Operating System :: POSIX :: Linux'])
