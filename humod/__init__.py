@@ -4,7 +4,7 @@
 # Please refer to the LICENSE file for conditions 
 #  under which this software may be distributed.
 #
-#   Visit http://huawei.ooz.ie/ for more info.
+#   Visit http://pyhumod.ooz.ie/ for more info.
 #
 
 """pyhumod provides user friendly interface to advanced features of 3g modems.

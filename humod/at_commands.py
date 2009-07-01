@@ -4,7 +4,7 @@
 # Please refer to the LICENSE file for conditions 
 #  under which this software may be distributed.
 #
-#   Visit http://huawei.ooz.ie/ for more info.
+#   Visit http://pyhumod.ooz.ie/ for more info.
 #
 
 """Classes and methods for handling AT commands."""
@@ -15,7 +15,9 @@ __author__ = 'Slawek Ligus <root@ooz.ie>'
 
 class Command(object):
     """Class defining generic perations performed on AT commands."""
+
     def __init__(self, modem, cmd):
+        """Constructor for Command class."""
         self.cmd = cmd
         self.modem = modem
 
@@ -25,6 +27,7 @@ class Command(object):
         Returns:
             List of strings or None if should_wait is set to True.
         """
+        self.modem.ctrl_port.read_waiting()
         return self.modem.ctrl_port.send(self.cmd, should_wait, at_cmd=self.cmd)
 
     def get(self, should_wait=True):
@@ -33,6 +36,7 @@ class Command(object):
         Returns:
             List of strings or None if should_wait is set to True.
         """
+        self.modem.ctrl_port.read_waiting()
         return self.modem.ctrl_port.send('%s?' % self.cmd, 
                                should_wait, at_cmd=self.cmd)
 
@@ -42,6 +46,7 @@ class Command(object):
         Returns:
             List of strings or None if should_wait is set to True.
         """
+        self.modem.ctrl_port.read_waiting()
         return self.modem.ctrl_port.send('%s=%s' % (self.cmd,
                                value), should_wait, at_cmd=self.cmd)
 
@@ -51,72 +56,66 @@ class Command(object):
         Returns:
             List of strings or None if should_wait is set to True.
         """
+        self.modem.ctrl_port.read_waiting()
         data = self.modem.ctrl_port.send('%s=?' % self.cmd, 
                                should_wait, at_cmd=self.cmd)
         return data
 
 
-class CommonActions(object):
-    """Common boilerplate for most Modem methods."""
+def _common_run_unprefixed(modem, at_cmd):
+    """Boilerplate for most methods based on Command.run()."""
+    info_cmd = Command(modem, at_cmd)
+    modem.ctrl_lock.acquire()
+    try:
+        info_cmd.run(should_wait=False)
+        info = modem.ctrl_port.return_data()
+        return info
+    finally:
+        modem.ctrl_lock.release()
 
+def _common_get_prefixed(modem, at_cmd):
+    """Boilerplate for most methods based on Command.get()."""
+    data_cmd = Command(modem, at_cmd)
+    modem.ctrl_lock.acquire()
+    try:
+        data = data_cmd.get()
+        return data
+    finally:
+        modem.ctrl_lock.release()
+
+def _common_run_prefixed(modem, at_cmd):
+    """Boilerplate for most methods based on Command.run()."""
+    data_cmd = Command(modem, at_cmd)
+    modem.ctrl_lock.acquire()
+    try:
+        data = data_cmd.run()
+        return data
+    finally:
+        modem.ctrl_lock.release()
+
+def _common_dsc_prefixed(modem, at_cmd):
+    """Boilerplate for most methods based on Command.dsc()."""
+    data_cmd = Command(modem, at_cmd)
+    modem.ctrl_lock.acquire()
+    try:
+        data = data_cmd.dsc()
+        return data
+    finally:
+        modem.ctrl_lock.release()
+
+def _common_set(modem, at_cmd, value):
+    """Boilerplate for most methods based on Command.set()."""
+    modem.ctrl_lock.acquire()
+    try:
+        Command(modem, at_cmd).set(value)
+    finally:
+        modem.ctrl_lock.release()
+
+
+class InteractiveCommands(object):
+    """SIM interactive commands."""
     ctrl_lock = None
     ctrl_port = None
-    send = lambda:None
-    def _common_run_unprefixed(self, at_cmd):
-        """Boilerplate for most methods based on Command.run()."""
-        info_cmd = Command(self, at_cmd)
-        self.ctrl_lock.acquire()
-        try:
-            # clear the buffer if something is in it
-            self.ctrl_port.read(self.ctrl_port.inWaiting())
-            info_cmd.run(should_wait=False)
-            info = self.ctrl_port.return_data()
-            return info
-        finally:
-            self.ctrl_lock.release()
-
-    def _common_get_prefixed(self, at_cmd):
-        """Boilerplate for most methods based on Command.get()."""
-        data_cmd = Command(self, at_cmd)
-        self.ctrl_lock.acquire()
-        try:
-            data = data_cmd.get()
-            return data
-        finally:
-            self.ctrl_lock.release()
-
-    def _common_run_prefixed(self, at_cmd):
-        """Boilerplate for most methods based on Command.run()."""
-        data_cmd = Command(self, at_cmd)
-        self.ctrl_lock.acquire()
-        try:
-            data = data_cmd.run()
-            return data
-        finally:
-            self.ctrl_lock.release()
-
-    def _common_dsc_prefixed(self, at_cmd):
-        """Boilerplate for most methods based on Command.dsc()."""
-        data_cmd = Command(self, at_cmd)
-        self.ctrl_lock.acquire()
-        try:
-            data = data_cmd.dsc()
-            return data
-        finally:
-            self.ctrl_lock.release()
-
-    def _common_set(self, at_cmd, value):
-        """Boilerplate for most methods based on Command.set()."""
-        self.ctrl_lock.acquire()
-        try:
-            Command(self, at_cmd).set(value)
-        finally:
-            self.ctrl_lock.release()
-
-
-class InteractiveCommands(CommonActions):
-    """SIM interactive commands."""
-   
     def send_text(self, number, contents):
         """Send a text message from the modem.
         
@@ -128,7 +127,6 @@ class InteractiveCommands(CommonActions):
             Sent text message number since last counter reset.
         """
         self.ctrl_lock.acquire()
-
         try:
             textsend = Command(self, '+CMGS')
             # Perform a SIM test first.
@@ -167,9 +165,9 @@ class InteractiveCommands(CommonActions):
         """Read one message from the SIM.
         
         Arguments:
-           message_num -- number of a message to read.
+            message_num -- number of a message to read.
         Returns:
-           message body (string) or None if no message is found.
+            message body (string) or None if the message isn't found.
         """
         self.ctrl_lock.acquire()
         try:
@@ -184,7 +182,7 @@ class InteractiveCommands(CommonActions):
     def del_message(self, message_num):
         """Delete message from the SIM."""
         msg_num_str = '%d' % message_num
-        self._common_set('+CMGD', msg_num_str)
+        _common_set(self, '+CMGD', msg_num_str)
 
     def hangup(self):
         """Hang up."""
@@ -196,32 +194,32 @@ class InteractiveCommands(CommonActions):
             self.ctrl_lock.release()
 
 
-class ShowCommands(CommonActions):
+class ShowCommands(object):
     """Show methods extract static read-only data."""
 
     def show_imei(self):
         """Show IMEI serial number."""
-        return self._common_run_unprefixed('+GSN')[0]
+        return _common_run_unprefixed(self, '+GSN')[0]
 
     def show_sn(self):
         """Show serial number."""
-        return self._common_run_prefixed('^SN')[0]
+        return _common_run_prefixed(self, '^SN')[0]
 
     def show_manufacturer(self):
         """Show manufacturer name."""
-        return self._common_run_unprefixed('+GMI')[0]
+        return _common_run_unprefixed(self, '+GMI')[0]
 
     def show_model(self):
         """Show device model name."""
-        return self._common_run_unprefixed('+GMM')[0]
+        return _common_run_unprefixed(self, '+GMM')[0]
         
     def show_revision(self):
         """Show device revision."""
-        return self._common_run_unprefixed('+GMR')[0]
+        return _common_run_unprefixed(self, '+GMR')[0]
 
     def show_hardcoded_operators(self):
         """List operators hardcoded on the device."""
-        hard_ops_list = self._common_run_prefixed('+COPN')
+        hard_ops_list = _common_run_prefixed(self, '+COPN')
         data = dict()
         for entry in hard_ops_list:
             num, op_name = [item[1:-1] for item in entry.split(',', 1)] 
@@ -230,33 +228,34 @@ class ShowCommands(CommonActions):
 
     def show_who_locked(self):
         """Show what network operator has locked the device."""
-        locker_info = self._common_dsc_prefixed('^CARDLOCK')
+        locker_info = _common_dsc_prefixed(self, '^CARDLOCK')
         if locker_info:
-            # Slice brackets away.
+            # Slice brackets off.
             locker_info = locker_info[0][1:-1].split(',')
         return locker_info
 
-class SetCommands(CommonActions):
+class SetCommands(object):
     """Set methods write user settings that are kept permanently."""
 
+    # pylint: disable-msg=R0913
     def set_pdp_context(self, num, proto='IP', apn='', ip_addr='', d_comp=0,
                         h_comp=0):
         """Set Packet Data Protocol context."""
         pdp_context_str = '%d,"%s","%s","%s",%d,%d' % (num, proto, apn, 
                                                        ip_addr, d_comp, h_comp)
-        self._common_set('+CGDCONT', pdp_context_str)
+        _common_set(self, '+CGDCONT', pdp_context_str)
 
 
-class EnterCommands(CommonActions):
+class EnterCommands(object):
     """Enter methods write user settings that are kept until modem restarts."""
 
     def enter_text_mode(self):
         """Enter text mode."""
-        self._common_set('+CMGF', '1')
+        _common_set(self, '+CMGF', '1')
 
     def enter_pdu_mode(self):
         """Enter PDU mode."""
-        self._common_set('+CMGF', '0')
+        _common_set(self, '+CMGF', '0')
 
     def enter_pin(self, pin, new_pin=None):
         """Enter or set new PIN."""
@@ -265,27 +264,26 @@ class EnterCommands(CommonActions):
         else:
             set_arg = '"%d"' % pin
         
-        return self._common_set('+CPIN', set_arg)
+        return _common_set(self, '+CPIN', set_arg)
 
     def enable_nmi(self, status=None):
         """Enable, disable or check status on new message indications."""
         inactive = '0,0,0,0,0' 
         active = '2,1,0,2,1'
         if status is None:
-            result = self._common_get_prefixed('+CNMI')[0]
+            result = _common_get_prefixed(self, '+CNMI')[0]
             return result == active
-
         if status is True:
-            return self._common_set('+CNMI', active)
+            return _common_set(self, '+CNMI', active)
         else:
-            return self._common_set('+CNMI', inactive)
+            return _common_set(self, '+CNMI', inactive)
  
-class GetCommands(CommonActions):
+class GetCommands(object):
     """Get methods read dynamic or user-set data."""
 
     def get_networks(self):
         """Scan for networks."""
-        active_ops = self._common_dsc_prefixed('+COPS')
+        active_ops = _common_dsc_prefixed(self, '+COPS')
         bracket_group = re.compile('\(.+?\)')
         if active_ops:
             data = list()
@@ -302,28 +300,29 @@ class GetCommands(CommonActions):
         """Get current mode.
         
         Returns:
-         0 - PDU mode,
-         1 - Text mode."""
-        current_mode = self._common_get_prefixed('+CMGF')[0]
+            0 -- PDU mode,
+            1 -- Text mode.
+        """
+        current_mode = _common_get_prefixed(self, '+CMGF')[0]
         return int(current_mode)
 
     def get_clock(self):
         """Return internal modem clock."""
-        return self._common_get_prefixed('+CCLK')[0]
+        return _common_get_prefixed(self, '+CCLK')[0]
 
     def get_service_center(self):
         """Show service center number."""
-        sc_data = self._common_get_prefixed('+CSCA')[0].split(',', 1)
+        sc_data = _common_get_prefixed(self, '+CSCA')[0].split(',', 1)
         service_center, sc_type_num = [_transform(item) for item in sc_data]
         return service_center, sc_type_num
 
     def get_detailed_error(self):
         """Print detailed error message."""
-        return self._common_run_prefixed('+CEER')[0]
+        return _common_run_prefixed(self, '+CEER')[0]
 
     def get_rssi(self):
         """Show RSSI level."""
-        rssi_info = self._common_run_prefixed('+CSQ')[0]
+        rssi_info = _common_run_prefixed(self, '+CSQ')[0]
         rssi = rssi_info.split(',', 1)
         return int(rssi[0])
 
@@ -335,13 +334,12 @@ class GetCommands(CommonActions):
             'SIM PIN' -- PIN required,
             'SIM PUK' -- PUK required.
         """
-        pin_info = self._common_get_prefixed('+CPIN')[0]
+        pin_info = _common_get_prefixed(self, '+CPIN')[0]
         return pin_info
 
     def get_pdp_context(self):
         """Read PDP context entries."""
-
-        pdp_context_data = self._common_get_prefixed('+CGDCONT')
+        pdp_context_data = _common_get_prefixed(self, '+CGDCONT')
         data = list()
         for pdp_context in pdp_context_data:
             pdp_set = [_transform(item) for item in pdp_context.split(',')]
@@ -349,13 +347,8 @@ class GetCommands(CommonActions):
         return data
 
 
-class CommandSet(GetCommands, SetCommands, EnterCommands,  InteractiveCommands,
-                 ShowCommands):
-    """Command set for a modem."""
-    pass
-
 def _transform(pdp_item):
-    """Return string if pdp_item contains quotes, integer otherwise."""
+    """Return a string if pdp_item starts with quotes or integer otherwise."""
     if pdp_item:
         if pdp_item.startswith('"'):
             return pdp_item[1:-1]

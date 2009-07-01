@@ -4,13 +4,14 @@
 # Please refer to the LICENSE file for conditions 
 #  under which this software may be distributed.
 #
-#   Visit http://huawei.ooz.ie/ for more info.
+#   Visit http://pyhumod.ooz.ie/ for more info.
 #
 
 """Action functions to be taken in response to events."""
 
 import re
 
+# pylint: disable-msg=W0613
 def call_notification(modem, message):
     """Execute when someone is calling."""
     print 'Someone is calling'
@@ -32,10 +33,9 @@ def flow_report_update(modem, message):
     hex2dec = lambda h: int(h, 16)
     flow_rpt = message[11:].rstrip()
     values = [hex2dec(item) for item in flow_rpt.split(',', 7)]
-    s = modem.status
-    x = None
-    (s.link_uptime, s.uplink, s.downlink, s.byte_tx, s.byte_rx, 
-     s.x, s.y) = values
+    sts = modem.status
+    (sts.link_uptime, sts.uplink, sts.downlink, sts.byte_tx, 
+     sts.byte_rx) = values[0:5]
 
 def mode_update(modem, message):
     """Update connection mode."""

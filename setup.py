@@ -32,9 +32,9 @@
 from distutils.core import setup
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
-__version__ = '0.01-beta'
+__version__ = '0.01'
 
-setup(name='humod',
+setup(name='pyhumod',
       version=__version__, 
       packages=['humod'],
       description='Python interface to Huawei modems.',

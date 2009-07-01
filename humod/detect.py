@@ -4,7 +4,7 @@
 # Please refer to the LICENSE file for conditions
 #  under which this software may be distributed.
 #
-#   Visit http://huawei.ooz.ie/ for more info.
+#   Visit http://pyhumod.ooz.ie/ for more info.
 #
 
 """Methods helpful by detecting modems."""
@@ -17,13 +17,14 @@ BUS_NAME = 'org.freedesktop.Hal'
 MGR_OBJ = '/org/freedesktop/Hal/Manager'
 HAL_DEV_IFACE = 'org.freedesktop.Hal.Device'
 HAL_MGR_IFACE = 'org.freedesktop.Hal.Manager'
+BUS = dbus.SystemBus()
 
 def _find_huawei_ports():
     """Find Serial interfaces for Huawei USB modems on a system."""
 
     # Huawei vendor ID
     vendor_id = '12d1'
-    hal_mgr_obj = bus.get_object(BUS_NAME, MGR_OBJ)
+    hal_mgr_obj = BUS.get_object(BUS_NAME, MGR_OBJ)
     hal_mgr = dbus.Interface(hal_mgr_obj, HAL_MGR_IFACE)
     all_dev = hal_mgr.FindDeviceByCapability('serial')
     devices = list()
@@ -35,7 +36,7 @@ def _find_huawei_ports():
 def _get_hal_info(udi):
     """Return Huawei interface name and short description."""
 
-    hal_dev = bus.get_object(BUS_NAME, udi)
+    hal_dev = BUS.get_object(BUS_NAME, udi)
     dev_property = hal_dev.GetProperty
     serial_port = dev_property('serial.device', dbus_interface=HAL_DEV_IFACE)
     info_product = dev_property('info.product', dbus_interface=HAL_DEV_IFACE)
@@ -44,9 +45,7 @@ def _get_hal_info(udi):
 
 def get_modem_devices():
     """Group serial ports by modem name."""
-
     modems = dict()
-
     devices = _find_huawei_ports()
     if devices:
         for dev in devices:
@@ -61,8 +60,7 @@ def get_modem_devices():
     return modems
 
 def suggest_devices():
-    """Suggests a pair of serial devices {modem and control device)."""
-
+    """Suggests a pair of serial devices (data and control port)."""
     modems = get_modem_devices()
     for mod in modems:
         port_list = modems[mod]
@@ -75,4 +73,3 @@ def suggest_devices():
     else:
         return []
 
-bus = dbus.SystemBus()

@@ -4,7 +4,7 @@
 # Please refer to the LICENSE file for conditions 
 #  under which this software may be distributed.
 #
-#   Visit http://huawei.ooz.ie/ for more info.
+#   Visit http://pyhumod.ooz.ie/ for more info.
 #
 
 """This module defines the base Modem() class."""
@@ -16,9 +16,9 @@ import threading
 import Queue
 import time
 import os
-from humod import at_commands
 from humod import errors
 from humod import actions
+from humod import at_commands as atc
 
 DEFAULT_DATA_PORT = '/dev/ttyUSB0'
 DEFAULT_CONTROL_PORT = '/dev/ttyUSB1'
@@ -27,7 +27,7 @@ PPPD_PATH = '/usr/sbin/pppd'
 
 class Interpreter(threading.Thread):
     """Interpreter thread."""
-    def __init__(self, queue, modem, patterns):
+    def __init__(self, modem, queue, patterns):
         self.active = True
         self.queue = queue
         self.patterns = patterns
@@ -100,7 +100,7 @@ class Prober(object):
 
     def _start_interpreter(self):
         """Instanciate and start a new interpreter."""
-        self._interpreter = Interpreter(self.queue, self.modem, self.patterns)
+        self._interpreter = Interpreter(self.modem, self.queue, self.patterns)
         self._interpreter.start()
 
     def start(self):
@@ -126,6 +126,10 @@ class Prober(object):
             raise errors.HumodUsageError('Prober not started.')
 
 
+# pylint: disable-msg=R0904
+# pylint: disable-msg=R0903
+# pylint: disable-msg=R0902
+# pylint: disable-msg=R0901
 class ModemPort(serial.Serial):
     """Class extending serial.Serial by humod specific methods."""
 
@@ -155,6 +159,10 @@ class ModemPort(serial.Serial):
             # answer (starting with '+command:' value) will be returned by 
             #return_data(). Otherwise any string will be returned.
             return self.return_data(at_cmd)
+
+    def read_waiting(self):
+        """Clear the searial port by reading all data waiting in it."""
+        return self.read(self.inWaiting())
 
     def return_data(self, command=None):
         """Read until exit status is returned.
@@ -189,8 +197,7 @@ class ConnectionStatus(object):
     """Data structure representing current state of the modem."""
 
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        """Constructor for ConnectionStatus class."""
         self.rssi = 0
         self.uplink = 0
         self.downlink = 0
@@ -203,8 +210,6 @@ class ConnectionStatus(object):
         """Print a report about the current connection status."""
         format = '%20s : %5s'
         mapping = (('Signal Strength', self.rssi),
-                   ('X', self.x),
-                   ('Y', self.y),
                    ('Bytes rx', self.bytes_rx),
                    ('Bytes tx', self.bytes_tx),
                    ('Uplink (B/s)', self.uplink),
@@ -216,9 +221,12 @@ class ConnectionStatus(object):
             print format % item
 
 
-class Modem(at_commands.CommandSet):
-    """Huawei Modem."""
+class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands, 
+            atc.InteractiveCommands, atc.EnterCommands):
+    """Class representing a modem."""
 
+    # pylint: disable-msg=R0901
+    # pylint: disable-msg=R0904
     status = ConnectionStatus()
     baudrate = '7200000'
     settings = ['modem', 'crtscts', 'defaultroute', 'usehostname', '-detach',
@@ -235,6 +243,11 @@ class Modem(at_commands.CommandSet):
         self.ctrl_port = ModemPort(ctrl_port_str, 9600, timeout=PROBER_TIMEOUT)
         self.ctrl_lock = threading.Lock()
         self.prober = Prober(self)
+        atc.SetCommands.__init__(self)
+        atc.GetCommands.__init__(self)
+        atc.EnterCommands.__init__(self)
+        atc.InteractiveCommands.__init__(self)
+        atc.ShowCommands.__init__(self)
 
     def connect(self):
         """Use pppd to connect to the network."""
