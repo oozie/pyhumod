@@ -18,8 +18,10 @@ Modules:
 """
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
+__version__ = '0.02-alpha'
 
 import humod.at_commands
 import humod.errors
-import humod.actions 
+import humod.actions
+import humod.defaults
 from humod.humodem import Modem

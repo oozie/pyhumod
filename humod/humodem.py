@@ -18,12 +18,9 @@ import time
 import os
 from humod import errors
 from humod import actions
+from humod import defaults
 from humod import at_commands as atc
 
-DEFAULT_DATA_PORT = '/dev/ttyUSB0'
-DEFAULT_CONTROL_PORT = '/dev/ttyUSB1'
-PROBER_TIMEOUT = 0.5
-PPPD_PATH = '/usr/sbin/pppd'
 
 class Interpreter(threading.Thread):
     """Interpreter thread."""
@@ -52,7 +49,7 @@ class Interpreter(threading.Thread):
                 break
         else:
             actions.no_match(self.modem, message)
-            
+
 
 class QueueFeeder(threading.Thread):
     """Queue feeder thread."""
@@ -221,7 +218,7 @@ class ConnectionStatus(object):
             print format % item
 
 
-class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands, 
+class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
             atc.InteractiveCommands, atc.EnterCommands):
     """Class representing a modem."""
 
@@ -235,12 +232,13 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
     _pppd_pid = None
     _dial_num = '*99#'
 
-    def __init__(self, data_port_str=DEFAULT_DATA_PORT, 
-                 ctrl_port_str=DEFAULT_CONTROL_PORT):
+    def __init__(self, data_port_str=defaults.DATA_PORT,
+                 ctrl_port_str=defaults.CONTROL_PORT):
         """Open a serial connection to the modem."""
         self.data_port = ModemPort()
         self.data_port.setPort(data_port_str)
-        self.ctrl_port = ModemPort(ctrl_port_str, 9600, timeout=PROBER_TIMEOUT)
+        self.ctrl_port = ModemPort(ctrl_port_str, 9600,
+                                   timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_lock = threading.Lock()
         self.prober = Prober(self)
         atc.SetCommands.__init__(self)
@@ -259,14 +257,14 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
             data_port.send('ATDT%s\r' % self._dial_num, wait=False)
             status = data_port.readline()
             if status.startswith('CONNECT'):
-                pppd_args = [PPPD_PATH, self.baudrate, self.data_port.port]\
-                             +self.settings
+                pppd_args = [defaults.PPPD_PATH, self.baudrate,
+                             self.data_port.port] + self.settings
                 pid = os.fork()
                 if pid:
                     self._pppd_pid = pid
                 else:
                     try:
-                        os.execv(PPPD_PATH, pppd_args)
+                        os.execv(defaults.PPPD_PATH, pppd_args)
                     except:
                         raise errors.PppdError('An error while starting pppd.')
         else:

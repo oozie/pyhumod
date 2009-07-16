@@ -8,3 +8,4 @@ humod/at_commands.py
 humod/detect.py
 humod/errors.py
 humod/humodem.py
+humod/defaults.py

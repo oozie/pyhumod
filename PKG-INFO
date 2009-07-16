@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
-Name: humod
-Version: 0.01
+Name: pyhumod
+Version: 0.02-beta
 Summary: Python interface to Huawei modems.
 Home-page: http://pyhumod.googlecode.com/
 Author: Slawek Ligus
