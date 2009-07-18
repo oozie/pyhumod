@@ -17,7 +17,11 @@ DATA_PORT = '/dev/ttyUSB0'
 CONTROL_PORT = '/dev/ttyUSB1'
 PPPD_PATH = '/usr/sbin/pppd'
 PROBER_TIMEOUT = 0.5
-
+BAUDRATE = '115200'
+DIALNUM = '*99#'
+PPPD_PARAMS =['modem', 'crtscts', 'defaultroute', 'usehostname', '-detach',
+              'noipdefault', 'call', 'humod', 'user', 'ppp', 'usepeerdns',
+              'idle', '0', 'logfd', '8']
 if os.name == 'posix':
     # Posix systems.
     if 'linux' in os.sys.platform:

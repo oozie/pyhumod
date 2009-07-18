@@ -158,7 +158,7 @@ class ModemPort(serial.Serial):
             return self.return_data(at_cmd)
 
     def read_waiting(self):
-        """Clear the searial port by reading all data waiting in it."""
+        """Clear the serial port by reading all data waiting in it."""
         return self.read(self.inWaiting())
 
     def return_data(self, command=None):
@@ -204,7 +204,7 @@ class ConnectionStatus(object):
         self.mode = None
  
     def report(self):
-        """Print a report about the current connection status."""
+        """Print connection status report."""
         format = '%20s : %5s'
         mapping = (('Signal Strength', self.rssi),
                    ('Bytes rx', self.bytes_rx),
@@ -225,19 +225,18 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
     # pylint: disable-msg=R0901
     # pylint: disable-msg=R0904
     status = ConnectionStatus()
-    baudrate = '7200000'
-    settings = ['modem', 'crtscts', 'defaultroute', 'usehostname', '-detach',
-               'noipdefault', 'call', 'humod', 'user', 'ppp', 'usepeerdns',
-               'idle', '0', 'logfd', '8']
+    baudrate = defaults.BAUDRATE
+    pppd_params = defaults.PPPD_PARAMS
     _pppd_pid = None
-    _dial_num = '*99#'
+    _dial_num = defaults.DIALNUM
 
-    def __init__(self, data_port_str=defaults.DATA_PORT,
-                 ctrl_port_str=defaults.CONTROL_PORT):
+    def __init__(self, data=defaults.DATA_PORT,
+                 ctrl=defaults.CONTROL_PORT):
         """Open a serial connection to the modem."""
         self.data_port = ModemPort()
-        self.data_port.setPort(data_port_str)
-        self.ctrl_port = ModemPort(ctrl_port_str, 9600,
+        self.data_port.setPort(data)
+        self.data_port.setBaudrate(defaults.BAUDRATE)
+        self.ctrl_port = ModemPort(ctrl, 9600,
                                    timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_lock = threading.Lock()
         self.prober = Prober(self)
@@ -258,7 +257,7 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
             status = data_port.readline()
             if status.startswith('CONNECT'):
                 pppd_args = [defaults.PPPD_PATH, self.baudrate,
-                             self.data_port.port] + self.settings
+                             self.data_port.port] + self.pppd_params
                 pid = os.fork()
                 if pid:
                     self._pppd_pid = pid
@@ -268,7 +267,7 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
                     except:
                         raise errors.PppdError('An error while starting pppd.')
         else:
-            raise errors.HumodUsageError('Modem is already connected.')
+            raise errors.HumodUsageError('Modem should already be connected.')
 
     def disconnect(self):
         """Disconnect the modem."""
