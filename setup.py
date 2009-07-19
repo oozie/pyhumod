@@ -51,6 +51,6 @@ setup(name='pyhumod',
                    'Operating System :: POSIX',  
                    'Operating System :: POSIX :: Linux',
                    'Operating System :: MacOS :: MacOS X',
-                   'Classifier: Intended Audience :: Developers',
-                   'Classifier: Topic :: Communications',
-                   'Classifier: Topic :: Software Development :: Libraries'])
+                   'Intended Audience :: Developers',
+                   'Topic :: Communications',
+                   'Topic :: Software Development :: Libraries'])
