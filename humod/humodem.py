@@ -37,7 +37,7 @@ class Interpreter(threading.Thread):
             self.interpret(self.queue.get())
 
     def interpret(self, message):
-        """Match message pattern with action to take.
+        """Match message pattern with an action to take.
 
         Arguments:
             message -- string received from the modem.
@@ -48,7 +48,7 @@ class Interpreter(threading.Thread):
                 action(self.modem, message)
                 break
         else:
-            actions.no_match(self.modem, message)
+            actions.null_action(self.modem, message)
 
 
 class QueueFeeder(threading.Thread):
@@ -85,10 +85,10 @@ class Prober(object):
 
     def __init__(self, modem):
         self.queue = Queue.Queue()
-        self.patterns = actions.STANDARD_PATTERNS
         self._interpreter = None
         self._feeder = None
         self.modem = modem
+        self.patterns = None
 
     def _stop_interpreter(self):
         """Stop the interpreter."""
@@ -100,11 +100,14 @@ class Prober(object):
         self._interpreter = Interpreter(self.modem, self.queue, self.patterns)
         self._interpreter.start()
 
-    def start(self):
+    def start(self, patterns=None):
         """Start the prober.
 
         Starts two threads, an instance of QueueFeeder and Interpreter.
         """
+        self.patterns = patterns
+        if not patterns:
+            self.patterns = actions.STANDARD_ACTIONS
         if self._feeder:
             raise errors.HumodUsageError('Prober already started.')
         else:

@@ -16,10 +16,6 @@ def call_notification(modem, message):
     """Execute when someone is calling."""
     print 'Someone is calling'
 
-def no_match(modem, message):
-    """Handle a message non-matching any pattern."""
-    print 'No match for %r' % message
-
 def null_action(modem, message):
     """Take no action."""
     pass
@@ -53,12 +49,21 @@ def new_message(modem, message):
     """New message action."""
     print 'New message arrived.'
 
-STANDARD_PATTERNS = [(re.compile(r'^RING\r\n'), call_notification),
-                     (re.compile(r'^$'), null_action),
-                     (re.compile(r'^\+CMTI:.*'), new_message),
-                     (re.compile(r'^\r\n$'), null_action),
-                     (re.compile(r'^\^BOOT:.*$'), null_action),
-                     (re.compile(r'^\^MODE:.*'), mode_update),
-                     (re.compile(r'^\^RSSI:.*'), rssi_update),
-		     (re.compile(r'^\^DSFLOWRPT:'), flow_report_update)]
+PATTERN = {'incoming call': re.compile(r'^RING\r\n'),
+           'new sms': re.compile(r'^\+CMTI:.*'),
+	   'rssi update': re.compile(r'^\^RSSI:.*'),
+	   'flow report': re.compile(r'^\^DSFLOWRPT:'),
+	   'mode update': re.compile(r'^\^MODE:.*'),
+	   'boot update': re.compile(r'^\^BOOT:.*$'),
+	   'new line': re.compile(r'^\r\n$'),
+	   'empty line': re.compile(r'^$')}
+
+STANDARD_ACTIONS = [(PATTERN['incoming call'], call_notification),
+                    (PATTERN['new line'], null_action),
+                    (PATTERN['empty line'], null_action),
+                    (PATTERN['boot update'], null_action),
+                    (PATTERN['new sms'], new_message),
+                    (PATTERN['mode update'], mode_update),
+                    (PATTERN['rssi update'], rssi_update),
+		    (PATTERN['flow report'], flow_report_update)]
 
