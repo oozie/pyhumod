@@ -1,0 +1,21 @@
+PyHumod INSTALL
+===============
+
+ Installation from the latest source code:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $ hg clone https://pyhumod.googlecode.com/hg/ pyhumod
+  $ cd pyhumod
+  $ sudo python setup install
+  
+ Installation of version 0.01:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $ wget http://pyhumod.googlecode.com/files/pyhumod-0.01.tar.gz
+  $ tar xzf pyhumod-*.tar.gz
+  $ cd pyhumod-*
+  $ sudo python setup.py install
+
+ Notes:
+ ~~~~~~
+ * It's important that the conf/humod file is copied to /etc/ppp/peers,
+   otherwise the Modem.connect() method will fail.
+   

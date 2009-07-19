@@ -1,5 +1,7 @@
 MANIFEST
 LICENSE
+README
+INSTALL
 setup.py
 conf/humod
 humod/__init__.py
