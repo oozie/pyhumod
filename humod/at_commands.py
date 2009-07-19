@@ -10,6 +10,7 @@
 """Classes and methods for handling AT commands."""
 
 import re
+import humod.errors as errors
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
 
@@ -245,6 +246,25 @@ class SetCommands(object):
                                                        ip_addr, d_comp, h_comp)
         _common_set(self, '+CGDCONT', pdp_context_str)
 
+    def set_service_center(self, sca, tosca=145):
+        """Set Service Center address and type.
+        
+        Args:
+          sca -- String with service center address,
+          tosca -- Integer with SC type.
+        Raises:
+          AtCommandError -- if tosca contains an unknown value for SC type,
+          TypeError -- if SC type is not an integer.
+        """
+        # Possible type of SC values:
+        #  128: unknown
+        #  129: national
+        #  145: international
+        #  161: national 
+        if tosca not in (128, 129, 145, 161):
+            raise errors.AtCommandError('Unknown SC type: %i.' % tosca)
+        sca_str = '"%s",%i' % (sca, tosca)
+        _common_set(self, '+CSCA', sca_str)
 
 class EnterCommands(object):
     """Enter methods write user settings that are kept until modem restarts."""
