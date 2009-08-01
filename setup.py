@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # PyHumod License:
 # ================
@@ -29,10 +29,20 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+"""Setup file for PyHumod package."""
+
+import os
 from distutils.core import setup
 from humod import __version__
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
+
+CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod'])]
+try:
+    os.stat('/etc/ppp/options')
+except OSError:
+    CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod']),
+                    ('/etc/ppp/options', ['conf/options'])]
 
 setup(name='pyhumod',
       version=__version__,
@@ -45,7 +55,7 @@ setup(name='pyhumod',
       url='http://pyhumod.googlecode.com/',
       license='BSD',
       platforms=['Linux'],
-      data_files=[('/etc/ppp/peers',['conf/humod'])],
+      data_files=CONFIG_FILES,
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
                    'Operating System :: POSIX',  

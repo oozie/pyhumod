@@ -192,16 +192,16 @@ class InteractiveCommands(object):
 
     def read_pbent(self, start_index, end_index=None):
         """Read phonebook entries."""
-        range = True
+        return_range = True
         if not end_index:
             end_index = start_index
-            range = False
+            return_range = False
         index_range = '%d,%d' % (start_index, end_index)
         entries = _common_set(self, '+CPBR', index_range)
         if start_index > end_index:
             entries.reverse()
         entries_list = _enlist_data(entries)
-        if range:
+        if return_range:
             return entries_list
         return entries_list[0]
 
@@ -210,10 +210,10 @@ class InteractiveCommands(object):
         entries = _common_set(self, '+CPBF', '"%s"' % query)
         return _enlist_data(entries)
 
-    def write_pbent(self, index, number, text, type=145):
+    def write_pbent(self, index, number, text, numtype=145):
         """Write a phonebook entry."""
-        param = '%d,"%s",%d,"%s"' % (index, number, type, text)
-	_common_set(self, '+CPBW', param)
+        param = '%d,"%s",%d,"%s"' % (index, number, numtype, text)
+        _common_set(self, '+CPBW', param)
 
     def del_pbent(self, index):
         """Clear out a phonebook entry."""
@@ -403,11 +403,11 @@ def _enlist_data(string_list, max_split=None):
     entries_list = list()
     if max_split:
         for entry in string_list:
-           entry_list = [_transform(item) for item 
-                         in entry.split(',', max_split)]
-           entries_list.append(entry_list)
+            entry_list = [_transform(item) for item 
+                          in entry.split(',', max_split)]
+            entries_list.append(entry_list)
     else:
         for entry in string_list:
-           entry_list = [_transform(item) for item in entry.split(',')]
-           entries_list.append(entry_list)
+            entry_list = [_transform(item) for item in entry.split(',')]
+            entries_list.append(entry_list)
     return entries_list

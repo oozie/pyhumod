@@ -4,6 +4,7 @@ README
 INSTALL
 setup.py
 conf/humod
+conf/options
 humod/__init__.py
 humod/actions.py
 humod/at_commands.py
