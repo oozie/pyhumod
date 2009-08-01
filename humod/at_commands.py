@@ -108,7 +108,8 @@ def _common_set(modem, at_cmd, value):
     """Boilerplate for most methods based on Command.set()."""
     modem.ctrl_lock.acquire()
     try:
-        Command(modem, at_cmd).set(value)
+        data = Command(modem, at_cmd).set(value)
+        return data
     finally:
         modem.ctrl_lock.release()
 
@@ -158,7 +159,7 @@ class InteractiveCommands(object):
         try:
             message_lister = Command(self, '+CMGL')
             messages_data = message_lister.set('"%s"' % message_type)
-            return messages_data
+            return _enlist_data(messages_data, 4)
         finally:
             self.ctrl_lock.release()
 
@@ -187,13 +188,36 @@ class InteractiveCommands(object):
 
     def hangup(self):
         """Hang up."""
-        hup = Command(self, '+CHUP')
-        self.ctrl_lock.acquire()
-        try:
-            hup.run()
-        finally:
-            self.ctrl_lock.release()
+        _common_run_unprefixed(self, '+CHUP')
 
+    def read_pbent(self, start_index, end_index=None):
+        """Read phonebook entries."""
+        range = True
+        if not end_index:
+            end_index = start_index
+            range = False
+        index_range = '%d,%d' % (start_index, end_index)
+        entries = _common_set(self, '+CPBR', index_range)
+        if start_index > end_index:
+            entries.reverse()
+        entries_list = _enlist_data(entries)
+        if range:
+            return entries_list
+        return entries_list[0]
+
+    def find_pbent(self, query=''):
+        """Find phonebook entries matching a query string."""
+        entries = _common_set(self, '+CPBF', '"%s"' % query)
+        return _enlist_data(entries)
+
+    def write_pbent(self, index, number, text, type=145):
+        """Write a phonebook entry."""
+        param = '%d,"%s",%d,"%s"' % (index, number, type, text)
+	_common_set(self, '+CPBW', param)
+
+    def del_pbent(self, index):
+        """Clear out a phonebook entry."""
+        _common_set(self, '+CPBW', '%d' % index)
 
 class ShowCommands(object):
     """Show methods extract static read-only data."""
@@ -360,10 +384,7 @@ class GetCommands(object):
     def get_pdp_context(self):
         """Read PDP context entries."""
         pdp_context_data = _common_get_prefixed(self, '+CGDCONT')
-        data = list()
-        for pdp_context in pdp_context_data:
-            pdp_set = [_transform(item) for item in pdp_context.split(',')]
-            data.append(pdp_set)
+        data = _enlist_data(pdp_context_data)
         return data
 
 
@@ -377,3 +398,16 @@ def _transform(pdp_item):
     else:
         return ''
 
+def _enlist_data(string_list, max_split=None):
+    """Transform data strings into data lists and return them."""
+    entries_list = list()
+    if max_split:
+        for entry in string_list:
+           entry_list = [_transform(item) for item 
+                         in entry.split(',', max_split)]
+           entries_list.append(entry_list)
+    else:
+        for entry in string_list:
+           entry_list = [_transform(item) for item in entry.split(',')]
+           entries_list.append(entry_list)
+    return entries_list
