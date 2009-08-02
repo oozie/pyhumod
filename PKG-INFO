@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pyhumod
-Version: 0.02-alpha
+Version: 0.02-source
 Summary: Python interface to Huawei modems.
 Home-page: http://pyhumod.googlecode.com/
 Author: Slawek Ligus
@@ -13,6 +13,6 @@ Classifier: Natural Language :: English
 Classifier: Operating System :: POSIX
 Classifier: Operating System :: POSIX :: Linux
 Classifier: Operating System :: MacOS :: MacOS X
-Classifier: Classifier: Intended Audience :: Developers
-Classifier: Classifier: Topic :: Communications
-Classifier: Classifier: Topic :: Software Development :: Libraries
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Communications
+Classifier: Topic :: Software Development :: Libraries
