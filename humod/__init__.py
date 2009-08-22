@@ -18,7 +18,7 @@ Modules:
 """
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
-__version__ = '0.02-source'
+__version__ = '0.03-latest'
 
 import humod.at_commands
 import humod.errors

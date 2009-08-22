@@ -249,13 +249,15 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
         atc.InteractiveCommands.__init__(self)
         atc.ShowCommands.__init__(self)
 
-    def connect(self):
+    def connect(self, dialtone_check=True):
         """Use pppd to connect to the network."""
         # Modem is not connected if _pppd_pid is set to None.
         if not self._pppd_pid:
             data_port = self.data_port
             data_port.open()
             data_port.send('ATZ\r')
+            if not dialtone_check:
+                data_port.send('ATX3\r')
             data_port.send('ATDT%s\r' % self._dial_num, wait=False)
             status = data_port.readline()
             if status.startswith('CONNECT'):
@@ -270,12 +272,20 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
                     except:
                         raise errors.PppdError('An error while starting pppd.')
         else:
-            raise errors.HumodUsageError('Modem should already be connected.')
+            last_pppd_result = os.waitpid(self._pppd_pid, os.WNOHANG)
+            if last_pppd_result != (0, 0):
+                # Reconnect.
+                self._pppd_pid = None
+                self.connect(dialtone_check)
+            else:
+                # Modem already connected.   
+                raise errors.HumodUsageError('Modem already connected.')
 
     def disconnect(self):
         """Disconnect the modem."""
         if self._pppd_pid:
             os.kill(self._pppd_pid, 15)
+            os.waitpid(self._pppd_pid, 0)
             self._pppd_pid = None
         else:
             raise errors.HumodUsageError('Not connected.')
