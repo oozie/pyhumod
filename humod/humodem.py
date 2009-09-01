@@ -133,7 +133,7 @@ class Prober(object):
 class ModemPort(serial.Serial):
     """Class extending serial.Serial by humod specific methods."""
 
-    def send(self, cmd, suffix, prefixed=True):
+    def send_at(self, cmd, suffix, prefixed=True):
         """Send serial text to the modem.
 
         Arguments:

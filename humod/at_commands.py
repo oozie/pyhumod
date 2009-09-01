@@ -30,7 +30,7 @@ class Command(object):
             List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send(self.cmd, '', self.prefixed)
+        return self.modem.ctrl_port.send_at(self.cmd, '', self.prefixed)
         
 
     def get(self):
@@ -40,7 +40,7 @@ class Command(object):
             List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send(self.cmd, '?', self.prefixed)
+        return self.modem.ctrl_port.send_at(self.cmd, '?', self.prefixed)
 
     def set(self, value):
         r"""Send the 'AT<+CMD>=<value>\r' string to the modem.
@@ -49,7 +49,7 @@ class Command(object):
             List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send(self.cmd, '=%s' % value,
+        return self.modem.ctrl_port.send_at(self.cmd, '=%s' % value,
                                          self.prefixed)
 
     def dsc(self):
@@ -59,7 +59,7 @@ class Command(object):
             List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send(self.cmd, '=?', self.prefixed)
+        return self.modem.ctrl_port.send_at(self.cmd, '=?', self.prefixed)
 
 
 def _common_run(modem, at_cmd, prefixed=True):
