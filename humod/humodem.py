@@ -133,32 +133,31 @@ class Prober(object):
 class ModemPort(serial.Serial):
     """Class extending serial.Serial by humod specific methods."""
 
-    def send(self, text, wait=True, at_cmd=None):
+    def send(self, cmd, suffix, prefixed=True):
         """Send serial text to the modem.
 
         Arguments:
             self -- serial port to send to,
             text -- text value to send,
-            wait -- wait for and return the output,
-            at_cmd -- interpret as an AT command.
+            prefixed -- boolean determining weather to strip the AT
+                        command prefix from each output line.
 
         Returns:
-            List of strings if wait is set to True.
+            List of strings.
         """
-        if at_cmd:
-            self.write('AT%s\r' % text)
-        else:
-            self.write(text)
+        self.write('AT%s%s\r' % (cmd, suffix))
         # Read in the echoed text.
         # Check for errors and raise exception with specific error code.
         input_line = self.readline()
         errors.check_for_errors(input_line)
         # Return the result.
-        if wait:
+        if prefixed:
             # If the text being sent is an AT command, only relevant context
             # answer (starting with '+command:' value) will be returned by 
             #return_data(). Otherwise any string will be returned.
-            return self.return_data(at_cmd)
+            return self.return_data(cmd)
+        else:
+            return self.return_data()
 
     def read_waiting(self):
         """Clear the serial port by reading all data waiting in it."""
@@ -255,11 +254,14 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
         if not self._pppd_pid:
             data_port = self.data_port
             data_port.open()
-            data_port.send('ATZ\r')
+            data_port.write('ATZ\r\n')
+	    data_port.return_data()
             if not dialtone_check:
-                data_port.send('ATX3\r')
-            data_port.send('ATDT%s\r' % self._dial_num, wait=False)
-            status = data_port.readline()
+                data_port.write('ATX3\r\n')
+                data_port.return_data()
+            data_port.write('ATDT%s\r\n' % self._dial_num)
+            data_port.readline()
+	    status = data_port.readline()
             if status.startswith('CONNECT'):
                 pppd_args = [defaults.PPPD_PATH, self.baudrate,
                              self.data_port.port] + self.pppd_params

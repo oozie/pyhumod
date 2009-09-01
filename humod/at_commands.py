@@ -17,66 +17,64 @@ __author__ = 'Slawek Ligus <root@ooz.ie>'
 class Command(object):
     """Class defining generic perations performed on AT commands."""
 
-    def __init__(self, modem, cmd):
+    def __init__(self, modem, cmd, prefixed=True):
         """Constructor for Command class."""
         self.cmd = cmd
         self.modem = modem
+        self.prefixed = prefixed
 
-    def run(self, should_wait=True):
+    def run(self):
         r"""Send the AT command followed by the '\r' character to the modem.
         
         Returns:
-            List of strings or None if should_wait is set to True.
+            List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send(self.cmd, should_wait, at_cmd=self.cmd)
+        return self.modem.ctrl_port.send(self.cmd, '', self.prefixed)
+        
 
-    def get(self, should_wait=True):
+    def get(self):
         r"""Send the AT command followed by the '?\r' characters to the modem.
         
         Returns:
-            List of strings or None if should_wait is set to True.
+            List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send('%s?' % self.cmd, 
-                               should_wait, at_cmd=self.cmd)
+        return self.modem.ctrl_port.send(self.cmd, '?', self.prefixed)
 
-    def set(self, value, should_wait=True):
+    def set(self, value):
         r"""Send the 'AT<+CMD>=<value>\r' string to the modem.
         
         Returns:
-            List of strings or None if should_wait is set to True.
+            List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send('%s=%s' % (self.cmd,
-                               value), should_wait, at_cmd=self.cmd)
+        return self.modem.ctrl_port.send(self.cmd, '=%s' % value,
+                                         self.prefixed)
 
-    def dsc(self, should_wait=True):
+    def dsc(self):
         r"""Send the AT command followed by the '=?\r' characters to the modem.
         
         Returns:
-            List of strings or None if should_wait is set to True.
+            List of strings.
         """
         self.modem.ctrl_port.read_waiting()
-        data = self.modem.ctrl_port.send('%s=?' % self.cmd, 
-                               should_wait, at_cmd=self.cmd)
-        return data
+        return self.modem.ctrl_port.send(self.cmd, '=?', self.prefixed)
 
 
-def _common_run_unprefixed(modem, at_cmd):
+def _common_run(modem, at_cmd, prefixed=True):
     """Boilerplate for most methods based on Command.run()."""
-    info_cmd = Command(modem, at_cmd)
+    info_cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        info_cmd.run(should_wait=False)
-        info = modem.ctrl_port.return_data()
-        return info
+        data = info_cmd.run()
+        return data
     finally:
         modem.ctrl_lock.release()
 
-def _common_get_prefixed(modem, at_cmd):
+def _common_get(modem, at_cmd, prefixed=True):
     """Boilerplate for most methods based on Command.get()."""
-    data_cmd = Command(modem, at_cmd)
+    data_cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
         data = data_cmd.get()
@@ -84,19 +82,9 @@ def _common_get_prefixed(modem, at_cmd):
     finally:
         modem.ctrl_lock.release()
 
-def _common_run_prefixed(modem, at_cmd):
-    """Boilerplate for most methods based on Command.run()."""
-    data_cmd = Command(modem, at_cmd)
-    modem.ctrl_lock.acquire()
-    try:
-        data = data_cmd.run()
-        return data
-    finally:
-        modem.ctrl_lock.release()
-
-def _common_dsc_prefixed(modem, at_cmd):
+def _common_dsc(modem, at_cmd, prefixed=True):
     """Boilerplate for most methods based on Command.dsc()."""
-    data_cmd = Command(modem, at_cmd)
+    data_cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
         data = data_cmd.dsc()
@@ -104,11 +92,11 @@ def _common_dsc_prefixed(modem, at_cmd):
     finally:
         modem.ctrl_lock.release()
 
-def _common_set(modem, at_cmd, value):
+def _common_set(modem, at_cmd, value, prefixed=True):
     """Boilerplate for most methods based on Command.set()."""
     modem.ctrl_lock.acquire()
     try:
-        data = Command(modem, at_cmd).set(value)
+        data = Command(modem, at_cmd, prefixed).set(value)
         return data
     finally:
         modem.ctrl_lock.release()
@@ -130,11 +118,10 @@ class InteractiveCommands(object):
         """
         self.ctrl_lock.acquire()
         try:
-            textsend = Command(self, '+CMGS')
+            self.ctrl_port.write('AT+CMGS="%s"\r\n' % number)
             # Perform a SIM test first.
-            textsend.dsc()
-            textsend.set('"%s"' % number, should_wait=False)
-            result = self.ctrl_port.send(contents+chr(26))
+            self.ctrl_port.write(contents+chr(26))
+            result = self.ctrl_port.return_data()
             # A text number is an integer number, returned in the
             # last returned entry of the result, just after the ": " part.
             text_number = int(result[-1].split(': ')[1])
@@ -173,9 +160,8 @@ class InteractiveCommands(object):
         """
         self.ctrl_lock.acquire()
         try:
-            message_reader = Command(self, '+CMGR')
-            message_reader.set(message_num, should_wait=False)
-            message = self.ctrl_port.return_data()
+            message_reader = Command(self, '+CMGR', prefixed=False)
+            message = message_reader.set(message_num)
             # Slicing out the header.
             return '\n'.join(message[1:])
         finally:
@@ -188,7 +174,7 @@ class InteractiveCommands(object):
 
     def hangup(self):
         """Hang up."""
-        _common_run_unprefixed(self, '+CHUP')
+        _common_run(self, '+CHUP', prefixed=False)
 
     def read_pbent(self, start_index, end_index=None):
         """Read phonebook entries."""
@@ -224,27 +210,27 @@ class ShowCommands(object):
 
     def show_imei(self):
         """Show IMEI serial number."""
-        return _common_run_unprefixed(self, '+GSN')[0]
+        return _common_run(self, '+GSN', prefixed=False)[0]
 
     def show_sn(self):
         """Show serial number."""
-        return _common_run_prefixed(self, '^SN')[0]
+        return _common_run(self, '^SN', prefixed=True)[0]
 
     def show_manufacturer(self):
         """Show manufacturer name."""
-        return _common_run_unprefixed(self, '+GMI')[0]
+        return _common_run(self, '+GMI', prefixed=False)[0]
 
     def show_model(self):
         """Show device model name."""
-        return _common_run_unprefixed(self, '+GMM')[0]
+        return _common_run(self, '+GMM', prefixed=False)[0]
         
     def show_revision(self):
         """Show device revision."""
-        return _common_run_unprefixed(self, '+GMR')[0]
+        return _common_run(self, '+GMR', prefixed=False)[0]
 
     def show_hardcoded_operators(self):
         """List operators hardcoded on the device."""
-        hard_ops_list = _common_run_prefixed(self, '+COPN')
+        hard_ops_list = _common_run(self, '+COPN')
         data = dict()
         for entry in hard_ops_list:
             num, op_name = [item[1:-1] for item in entry.split(',', 1)] 
@@ -252,8 +238,8 @@ class ShowCommands(object):
         return data
 
     def show_who_locked(self):
-        """Show what network operator has locked the device."""
-        locker_info = _common_dsc_prefixed(self, '^CARDLOCK')
+        """Show which network operator has locked the device."""
+        locker_info = _common_dsc(self, '^CARDLOCK', prefixed=True)
         if locker_info:
             # Slice brackets off.
             locker_info = locker_info[0][1:-1].split(',')
@@ -315,7 +301,7 @@ class EnterCommands(object):
         inactive = '0,0,0,0,0' 
         active = '2,1,0,2,1'
         if status is None:
-            result = _common_get_prefixed(self, '+CNMI')[0]
+            result = _common_get(self, '+CNMI')[0]
             return result == active
         if status is True:
             return _common_set(self, '+CNMI', active)
@@ -327,7 +313,7 @@ class GetCommands(object):
 
     def get_networks(self):
         """Scan for networks."""
-        active_ops = _common_dsc_prefixed(self, '+COPS')
+        active_ops = _common_dsc(self, '+COPS')
         bracket_group = re.compile('\(.+?\)')
         if active_ops:
             data = list()
@@ -347,26 +333,26 @@ class GetCommands(object):
             0 -- PDU mode,
             1 -- Text mode.
         """
-        current_mode = _common_get_prefixed(self, '+CMGF')[0]
+        current_mode = _common_get(self, '+CMGF')[0]
         return int(current_mode)
 
     def get_clock(self):
         """Return internal modem clock."""
-        return _common_get_prefixed(self, '+CCLK')[0]
+        return _common_get(self, '+CCLK')[0]
 
     def get_service_center(self):
         """Show service center number."""
-        sc_data = _common_get_prefixed(self, '+CSCA')[0].split(',', 1)
+        sc_data = _common_get(self, '+CSCA')[0].split(',', 1)
         service_center, sc_type_num = [_transform(item) for item in sc_data]
         return service_center, sc_type_num
 
     def get_detailed_error(self):
         """Print detailed error message."""
-        return _common_run_prefixed(self, '+CEER')[0]
+        return _common_run(self, '+CEER')[0]
 
     def get_rssi(self):
         """Show RSSI level."""
-        rssi_info = _common_run_prefixed(self, '+CSQ')[0]
+        rssi_info = _common_run(self, '+CSQ')[0]
         rssi = rssi_info.split(',', 1)
         return int(rssi[0])
 
@@ -378,12 +364,12 @@ class GetCommands(object):
             'SIM PIN' -- PIN required,
             'SIM PUK' -- PUK required.
         """
-        pin_info = _common_get_prefixed(self, '+CPIN')[0]
+        pin_info = _common_get(self, '+CPIN')[0]
         return pin_info
 
     def get_pdp_context(self):
         """Read PDP context entries."""
-        pdp_context_data = _common_get_prefixed(self, '+CGDCONT')
+        pdp_context_data = _common_get(self, '+CGDCONT')
         data = _enlist_data(pdp_context_data)
         return data
 
