@@ -255,13 +255,13 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
             data_port = self.data_port
             data_port.open()
             data_port.write('ATZ\r\n')
-	    data_port.return_data()
+            data_port.return_data()
             if not dialtone_check:
                 data_port.write('ATX3\r\n')
                 data_port.return_data()
             data_port.write('ATDT%s\r\n' % self._dial_num)
             data_port.readline()
-	    status = data_port.readline()
+            status = data_port.readline()
             if status.startswith('CONNECT'):
                 pppd_args = [defaults.PPPD_PATH, self.baudrate,
                              self.data_port.port] + self.pppd_params

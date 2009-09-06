@@ -9,10 +9,21 @@
 
 """Classes and methods for handling AT commands."""
 
+__author__ = 'Slawek Ligus <root@ooz.ie>'
+
 import re
 import humod.errors as errors
+from warnings import warn
 
-__author__ = 'Slawek Ligus <root@ooz.ie>'
+# Deprecated decorator.
+def deprecated(dep_func):
+    """Decorator used to mark functions as deprecated."""
+    def warn_and_run(*args, **kwargs):
+        """Print warning and run the function."""
+        warn('%r is deprecated and scheduled for removal.' % \
+             dep_func.__name__)
+        return dep_func(*args, **kwargs)
+    return warn_and_run
 
 class Command(object):
     """Class defining generic perations performed on AT commands."""
@@ -106,7 +117,8 @@ class InteractiveCommands(object):
     """SIM interactive commands."""
     ctrl_lock = None
     ctrl_port = None
-    def send_text(self, number, contents):
+    
+    def sms_send(self, number, contents):
         """Send a text message from the modem.
         
         Arguments:
@@ -129,7 +141,7 @@ class InteractiveCommands(object):
         finally:
             self.ctrl_lock.release()
 
-    def list_messages(self, message_type='ALL'):
+    def sms_list(self, message_type='ALL'):
         """List messages by type.
         
         Arguments:
@@ -150,7 +162,7 @@ class InteractiveCommands(object):
         finally:
             self.ctrl_lock.release()
 
-    def read_message(self, message_num):
+    def sms_read(self, message_num):
         """Read one message from the SIM.
         
         Arguments:
@@ -167,16 +179,36 @@ class InteractiveCommands(object):
         finally:
             self.ctrl_lock.release()
 
-    def del_message(self, message_num):
+    def sms_del(self, message_num):
         """Delete message from the SIM."""
         msg_num_str = '%d' % message_num
         _common_set(self, '+CMGD', msg_num_str)
+
+    @deprecated
+    def del_message(self, message_num):
+        """Deprecated equivalent of sms_del."""
+        return self.sms_del(message_num)
+
+    @deprecated
+    def read_message(self, message_num):
+        """Deprecated equivalent of sms_read."""
+        return self.sms_read(message_num)
+
+    @deprecated
+    def send_text(self, number, contents):
+        """Deprecated equivalent of sms_send."""
+        return self.sms_send(number, contents)
+
+    @deprecated
+    def list_messages(self, message_type='ALL'):
+        """Deprecated equivalent of sms_list."""
+        return self.sms_list(message_type)
 
     def hangup(self):
         """Hang up."""
         _common_run(self, '+CHUP', prefixed=False)
 
-    def read_pbent(self, start_index, end_index=None):
+    def pbent_read(self, start_index, end_index=None):
         """Read phonebook entries."""
         return_range = True
         if not end_index:
@@ -191,19 +223,39 @@ class InteractiveCommands(object):
             return entries_list
         return entries_list[0]
 
-    def find_pbent(self, query=''):
+    def pbent_find(self, query=''):
         """Find phonebook entries matching a query string."""
         entries = _common_set(self, '+CPBF', '"%s"' % query)
         return _enlist_data(entries)
 
-    def write_pbent(self, index, number, text, numtype=145):
+    def pbent_write(self, index, number, text, numtype=145):
         """Write a phonebook entry."""
         param = '%d,"%s",%d,"%s"' % (index, number, numtype, text)
         _common_set(self, '+CPBW', param)
 
-    def del_pbent(self, index):
+    def pbent_del(self, index):
         """Clear out a phonebook entry."""
         _common_set(self, '+CPBW', '%d' % index)
+
+    @deprecated
+    def find_pbent(self, query=''):
+        """Deprecated equivalent of pbent_find."""
+        return self.pbent_find(query)
+
+    @deprecated
+    def read_pbent(self, start_index, end_index=None):
+        """Deprecated equivalent of pbent_list."""
+        return self.pbent_read(start_index, end_index)
+
+    @deprecated
+    def del_pbent(self, index):
+        """Deprecated equivalent of pbent_del."""
+        return self.pbent_del(index)
+
+    @deprecated
+    def write_pbent(self, index, number, text, numtype=145):
+        """Deprecated equivalent of pbent_write."""
+        return self.pbent_write(index, number, text, numtype)
 
 class ShowCommands(object):
     """Show methods extract static read-only data."""
