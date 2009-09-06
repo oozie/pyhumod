@@ -331,14 +331,6 @@ class SetCommands(object):
 class EnterCommands(object):
     """Enter methods write user settings that are kept until modem restarts."""
 
-    def enter_text_mode(self):
-        """Enter text mode."""
-        _common_set(self, '+CMGF', '1')
-
-    def enter_pdu_mode(self):
-        """Enter PDU mode."""
-        _common_set(self, '+CMGF', '0')
-
     def enter_pin(self, pin, new_pin=None):
         """Enter or set new PIN."""
         if new_pin:
@@ -348,18 +340,44 @@ class EnterCommands(object):
         
         return _common_set(self, '+CPIN', set_arg)
 
-    def enable_nmi(self, status=None):
-        """Enable, disable or check status on new message indications."""
-        inactive = '0,0,0,0,0' 
-        active = '2,1,0,2,1'
+    def _common_enable(self, command, active, inactive, status, 
+                       active_set=None, inactive_set=None):
+        """Enable, disable or check status of a setting."""
+        if not active_set: 
+            active_set = active
+        if not inactive_set:
+            inactive_set = inactive
+
         if status is None:
-            result = _common_get(self, '+CNMI')[0]
+            result = _common_get(self, command)[0]
             return result == active
         if status is True:
-            return _common_set(self, '+CNMI', active)
+            _common_set(self, command, active_set)
         else:
-            return _common_set(self, '+CNMI', inactive)
- 
+            _common_set(self, command, inactive_set)
+
+    def enable_nmi(self, status=None):
+        """Enable, disable or check status on new message indications."""
+        return self._common_enable('+CNMI', '2,1,0,2,1', '0,0,0,0,0', status)
+
+    def enable_clip(self, status=None):
+        """Enable, disable or check status of calling line identification."""
+        return self._common_enable('+CLIP', '1,1', '0,1', status, '1', '0')
+
+    def enable_textmode(self, status=None):
+        """Enable, disable or find out about current mode."""
+        return self._common_enable('+CMGF', '1', '0', status)
+
+    @deprecated
+    def enter_text_mode(self):
+        """Enter text mode."""
+        _common_set(self, '+CMGF', '1')
+
+    @deprecated
+    def enter_pdu_mode(self):
+        """Enter PDU mode."""
+        _common_set(self, '+CMGF', '0')
+
 class GetCommands(object):
     """Get methods read dynamic or user-set data."""
 
@@ -377,16 +395,6 @@ class GetCommands(object):
                     transformed_set = [_transform(ni) for ni in items]
                     data.append(transformed_set)
             return data
-            
-    def get_mode(self):
-        """Get current mode.
-        
-        Returns:
-            0 -- PDU mode,
-            1 -- Text mode.
-        """
-        current_mode = _common_get(self, '+CMGF')[0]
-        return int(current_mode)
 
     def get_clock(self):
         """Return internal modem clock."""
@@ -424,6 +432,17 @@ class GetCommands(object):
         pdp_context_data = _common_get(self, '+CGDCONT')
         data = _enlist_data(pdp_context_data)
         return data
+
+    @deprecated
+    def get_mode(self):
+        """Get current mode.
+        
+        Returns:
+            0 -- PDU mode,
+            1 -- Text mode.
+        """
+        current_mode = _common_get(self, '+CMGF')[0]
+        return int(current_mode)
 
 
 def _transform(pdp_item):
