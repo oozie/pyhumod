@@ -1,11 +1,7 @@
-PyHumod README
-==============
-
 What is PyHumod?
 ----------------
 PyHumod is a Python package that will help you write your own apps for Huawei and compatible modems.
-For sample apps go to:
-http://code.google.com/p/pyhumod/wiki/CoolApps 
+See `sample apps <docs/CoolApps.rst>`. 
 
 Supported Features
 ------------------
@@ -17,24 +13,10 @@ Supported Features
 * Event handling.
 * SIM Phonebook manipulation.
 
-License
--------
-PyHumod is considered free software. Please refer to `LICENSE <LICENSE.rst>`_.
 
-
-Installation
-------------
-Please refer to `INSTALL <INSTALL.rst>`_.
-
-
-Documentation
--------------
-The most up-to-date documentation can be found on the project home page wiki:
-http://code.google.com/p/pyhumod/wiki/Main
-
-The project wiki is also stored in a Mercurial repository:
-
-``hg clone https://wiki.pyhumod.googlecode.com/hg/ pyhumod-wiki``
+* `Installation <INSTALL.rst>`_
+* `Documentation <docs/>`_
+* `License <LICENSE.rst>`_
 
 Links
 -----
