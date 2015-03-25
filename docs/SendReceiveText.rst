@@ -1,6 +1,6 @@
 Sending and receiving text messages
 ===================================
-Once the modem is properly detected and initialized, you can send, read and delete text messages. One important step at the start is to enter a so called 'TEXT mode', as sending texts in 'PDU mode' is not yet supported. Once this is accomplished you can start sending, reading and deleting messages.::
+Once the modem is properly detected and initialized, you can send, read and delete text messages. One important step at the start is to enter a so called 'TEXT mode', as sending texts in 'PDU mode' is not yet supported. Once this is accomplished you can start sending, reading and deleting messages.
 
     >>> modem.enable_textmode(True)
 
@@ -9,13 +9,13 @@ Sending texts
 To send a text, call the ``sms_send()`` method with two string arguments:
 
 1. A number to send to, e.g. '+353987654321'
-2. The contents of the message.::
+2. The contents of the message.
 
     >>> modem.sms_send('+353987654321', 'Are you free for dinner?')
 
 Listing texts
 -------------
-To list texts call the ``sms_list()`` method.:: 
+To list texts call the ``sms_list()`` method.
 
     >>> modem.sms_list()
     ['0,"REC READ","00353?????????",,"09/06/19,14:23:14+04"',
@@ -23,22 +23,24 @@ To list texts call the ``sms_list()`` method.::
 
 Reading texts
 -------------
-To read a messages, call the ``sms_read()`` method with message ID as an argument.::
+To read a messages, call the ``sms_read()`` method with message ID as an argument.
 
     >>> modem.sms_read(0)
     'Result out this evening. Gud luck'
 
 Deleting texts
 --------------
-In a similar way, in order to delete a message, call the ``sms_del()`` method with message ID as an argument.::
+In a similar way, in order to delete a message, call the ``sms_del()`` method with message ID as an argument.
 
     >>> modem.sms_del(0)
 
 New message notifications
 -------------------------
 By default new message notifications are not enabled. There are two steps to enable NMI:
+
 1. Start the prober service
-2. Call enable_nmi() method with True as argument::
+2. Call enable_nmi() method with True as argument
+
     >>> modem.prober.start()
     >>> modem.enable_nmi(True)
 
@@ -50,26 +52,28 @@ Once this is done, a new message can be handled by some code of your choice. By 
 
 You can create your own action-handling functions. See `EventHandling <EventHandling.rst>` to find out how. 
 
-Next: Find out more about your modem by reading `its static data <ShowStaticInfo.rst>`
+Next: Find out more about your modem by reading `its static data <ShowStaticInfo.rst>`_
 --------------------------------------------------------------------------------------
 
 ----------
 
 **Question**
 
-Regarding read_message,  I have received an SMS that was sort of encoded.  Other messages were in plain text but this particular message send via cellphone was in some sort of encoding (it was a two part message if that helps). 
+Regarding read_message: I have received an SMS that was sort of encoded.  Other messages were in plain text but this particular message send via cellphone was in some sort of encoding (it was a two part message if that helps). 
 
 Is this normal? what encoding do cellphones use to send their messages?  Can anybody point me in the right direction. thanks.
 
 **Answer**
 
-Use siminfo ``is_gsm_encoded`` to detect message is encoded and ``decode_gsm`` to decode
-Question
+This is GSM0338 encoded message. See `codec <https://github.com/dsch/gsm0338>`_.
+
+**Question**
+
 Wondering how I can select messages based on sender? So far used message ID but only returns the message, I need to select only messages from certain numbers to operate on.
 
 **Answer**
 
-I think that should do:::
+I think that should do:
 
     #!/usr/bin/env python
     import humod
@@ -89,8 +93,5 @@ I think that should do:::
 
 **Question**
 
-Is there any way to detect the callerID of an incoming call (received via humod.actions.PATTERN call)?  The message content comes in as 'RING' 
-
-**Answer**
-
-Interesting, we have to figure this one out...
+Is there any way to detect the callerID of an incoming call (received via humod.actions.PATTERN call)?  The message content comes in as 'RING'.
+...
