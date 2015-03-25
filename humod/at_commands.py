@@ -1,6 +1,6 @@
 """Classes and methods for handling AT commands."""
 
-import re
+import re, csv
 import humod.errors as errors
 from warnings import warn
 
@@ -303,9 +303,9 @@ class GetCommands(object):
             network_data_list = bracket_group.findall(active_ops[0])
             for network_data_set in network_data_list:
                 unbracketed_set = network_data_set[1:-1]
-                items = unbracketed_set.split(',')
+                items = csv_ls(unbracketed_set)
                 if len(items) == 5:
-                    transformed_set = [_transform(ni) for ni in items]
+                    transformed_set = [safe_int(ni) for ni in items]
                     data.append(transformed_set)
             return data
 
@@ -315,9 +315,7 @@ class GetCommands(object):
 
     def get_service_center(self):
         """Show service center number."""
-        sc_data = _common_get(self, '+CSCA')[0].split(',', 1)
-        service_center, sc_type_num = [_transform(item) for item in sc_data]
-        return service_center, sc_type_num
+        return csv_ls(_common_get(self, '+CSCA')[0])
 
     def get_detailed_error(self):
         """Print detailed error message."""
@@ -352,27 +350,17 @@ class GetCommands(object):
             1: 'Text mode'
         }[int(current_mode)]
 
+def safe_int(x):
+    if x.startswith('+') or x.startswith('0') or len(x) > 9:
+        return x
+    try:
+        return int(x)
+    except ValueError:
+        return x
 
-def _transform(pdp_item):
-    """Return a string if pdp_item starts with quotes or integer otherwise."""
-    if pdp_item:
-        if pdp_item.startswith('"'):
-            return pdp_item[1:-1]
-        else:
-            return int(pdp_item)
-    else:
-        return ''
+def csv_ls(s):
+    return [x for x in csv.reader([s])][0]
 
-def _enlist_data(string_list, max_split=None):
+def _enlist_data(data):
     """Transform data strings into data lists and return them."""
-    entries_list = list()
-    if max_split:
-        for entry in string_list:
-            entry_list = [_transform(item) for item 
-                          in entry.split(',', max_split)]
-            entries_list.append(entry_list)
-    else:
-        for entry in string_list:
-            entry_list = [_transform(item) for item in entry.split(',')]
-            entries_list.append(entry_list)
-    return entries_list
+    return [[safe_int(x) for x in csv_ls(s)] for s in data]
