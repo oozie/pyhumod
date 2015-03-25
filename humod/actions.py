@@ -26,7 +26,7 @@ def flow_report_update(modem, message):
 
 def mode_update(modem, message):
     """Update connection mode."""
-    # Info taken from:
+    # Source info is no longer available, taken from:
     # https://forge.betavine.net/pipermail/vodafonemobilec-devel/
     # 2007-November/000044.html
     mode_dict = {'0': 'No service', '1': 'AMPS', '2': 'CDMA', '3': 'GSM/GPRS',
