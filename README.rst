@@ -12,7 +12,7 @@ Supported features
     * Getting information about the SMS service center
     * Enabling/disabling sms notifications
     * Listing/reading/deleting messages
-* `Showing static device information <docs/ShowStaticInfo.rst>`_:
+* `Showing static device information <docs/ShowStaticInfo.rst>`_
     * Manufacturer, Model, Revision, Serial Number,
     * IMEI number,
     * Hardcoded operators,
@@ -31,8 +31,5 @@ See also `Development Guide <docs/DevelGuide.rst>`_.
 * `Installation <INSTALL.rst>`_
 * `Documentation <docs/GettingStarted.rst>`_
 * `License <LICENSE.rst>`_
-
-Links
------
 * http://pyhumod.googlecode.com/ - Project Homepage on Google Code.
 * http://pyhumod.ooz.ie          - PyHumod central.
