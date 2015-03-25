@@ -83,7 +83,7 @@ In order to switch between modes, the ``.set()`` method of the same instance mus
 
 Respond to events
 =================
-`Event handling functionality<EventHandling.rst>`_ will help you build interactive apps for your modem: respond to RSSI change, new message delivery, incoming call flow report and any other event that is indicated via the control port. 
+`Event handling <EventHandling.rst>`_ functionality will help you build interactive apps for your modem: respond to RSSI change, new message delivery, incoming call flow report and any other event that is indicated via the control port. 
 
 Understanding events
 --------------------
@@ -124,12 +124,12 @@ The ``prober`` becomes aware of your predefined pattern-actions list when it is 
 
 **Question**
 
-I am trying to check my balance using AT commands, ``AT+CUSD=1,"131#"``
-I try to implement that as ``cmd = Command(m, '+CUSD=1,"131#"')``
-Not getting anything back after cmd.run().
-Tried ``cmd = Command(m, '+CUSD=1,"131#"', prefixed=False)`` as well.
-``cmd = Command(m, '+CUSD=1', prefixed=False)`` then
-``cmd.set("**131#")`` gives an error.
+| I am trying to check my balance using AT commands, ``AT+CUSD=1,"131#"``
+| I try to implement that as ``cmd = Command(m, '+CUSD=1,"131#"')``
+| Not getting anything back after cmd.run().
+| Tried ``cmd = Command(m, '+CUSD=1,"131#"', prefixed=False)`` as well.
+| ``cmd = Command(m, '+CUSD=1', prefixed=False)`` then
+| ``cmd.set("**131#")`` gives an error.
 
 **Answer**
 

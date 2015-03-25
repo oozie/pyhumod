@@ -3,8 +3,8 @@ Sample applications
 
 sms_exec.py
 -----------
-The program executes remote commands sent in via SMS and replies with the command output.::
-
+The program executes remote commands sent in via SMS and replies with the command output.
+:: python
     #!/usr/bin/env python
     # sms_exec.py
     # A sample application
