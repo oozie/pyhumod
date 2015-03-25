@@ -5,7 +5,7 @@ import re
 # pylint: disable-msg=W0613
 def call_notification(modem, message):
     """Execute when someone is calling."""
-    print 'Someone is calling'
+    print('Someone is calling')
 
 def null_action(modem, message):
     """Take no action."""
@@ -38,7 +38,7 @@ def mode_update(modem, message):
 
 def new_message(modem, message):
     """New message action."""
-    print 'New message arrived.'
+    print('New message arrived.')
 
 PATTERN = {'incoming call': re.compile(r'^RING\r\n'),
            'new sms': re.compile(r'^\+CMTI:.*'),
@@ -57,4 +57,3 @@ STANDARD_ACTIONS = [(PATTERN['incoming call'], call_notification),
                     (PATTERN['mode update'], mode_update),
                     (PATTERN['rssi update'], rssi_update),
 		    (PATTERN['flow report'], flow_report_update)]
-

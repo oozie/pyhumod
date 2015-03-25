@@ -204,9 +204,9 @@ class ConnectionStatus(object):
                    ('Downlink (B/s)', self.downlink),
                    ('Seconds uptime', self.link_uptime),
                    ('Mode', self.mode))
-        print
+        print()
         for item in mapping:
-            print format % item
+            print(format % item)
 
 
 class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
