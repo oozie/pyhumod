@@ -232,7 +232,7 @@ class ShowCommands(object):
     def show_hardcoded_operators(self):
         """List operators hardcoded on the device."""
         hard_ops_list = _common_run(self, '+COPN')
-        data = dict()
+        data = {}
         for entry in hard_ops_list:
             num, op_name = [item[1:-1] for item in entry.split(',', 1)] 
             data[num] = op_name
@@ -296,7 +296,7 @@ class EnterCommands(object):
             active_set = active
         if not inactive_set:
             inactive_set = inactive
-
+        
         if status is None:
             result = _common_get(self, command)[0]
             return result == active
@@ -325,7 +325,7 @@ class GetCommands(object):
         active_ops = _common_dsc(self, '+COPS')
         bracket_group = re.compile('\(.+?\)')
         if active_ops:
-            data = list()
+            data = []
             network_data_list = bracket_group.findall(active_ops[0])
             for network_data_set in network_data_list:
                 unbracketed_set = network_data_set[1:-1]

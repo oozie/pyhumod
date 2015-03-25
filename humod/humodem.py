@@ -162,7 +162,7 @@ class ModemPort(serial.Serial):
         Raises:
             AtCommandError: If an error is returned by the modem.
         """
-        data = list()
+        data = []
         while 1:
             # Read in one line of input.
             input_line = self.readline().rstrip()
