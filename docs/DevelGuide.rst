@@ -25,16 +25,17 @@ Implement new methods
 The ``humod.at_commands.Command`` class can be used to implement AT command functionality. 
 Let's assume that the 'AT+CMD' is a generic AT command. From any mobile device viewpoint, you can issue an AT command in 4 ways: 
 
-* "AT+CMD" - tell the modem to do something, (**run**)
-* "AT+CMD?" - query the current setting in the memory or the current state, (**get**)
-* "AT+CMD=?" - see what are the possible values to set, (**dsc** for describe)
-* "AT+CMD=value" - set a value for a given command/setting. (**set**)
+* ``AT+CMD`` - tell the modem to do something, (**run**)
+* ``AT+CMD?`` - query the current setting in the memory or the current state, (**get**)
+* ``AT+CMD=?`` - see what are the possible values to set, (**dsc** for describe)
+* ``AT+CMD=value`` - set a value for a given command/setting. (**set**)
 
 The ``humod.at_commands.Command`` class implements four methods to run, query or set values of the AT commands. The methods names are run(), get(), dsc() and set(). 
 
 Sample command with prefixed output
 -----------------------------------
-Let's take the ``AT^SN`` command as an example. The command only supports the **run** operation and when issued to a modem it returns a string containing the command prefix ('``^SN: ``') followed by a serial number of the device. 
+Let's take the ``AT^SN`` command as an example. The command only supports the **run** operation and when issued to a modem it returns a string containing the command prefix (``'^SN: '``) followed by a serial number of the device. 
+
 You can use the the ``Command`` class in order to extract the serial number into a Python object. 
 
     >>> show_sn = Command(m, '^SN')
@@ -82,14 +83,14 @@ In order to switch between modes, the ``.set()`` method of the same instance mus
 
 Respond to events
 =================
-`Event handling functionality<EventHandling.rst>` will help you build interactive apps for your modem: respond to RSSI change, new message delivery, incoming call flow report and any other event that is indicated via the control port. 
+`Event handling functionality<EventHandling.rst>`_ will help you build interactive apps for your modem: respond to RSSI change, new message delivery, incoming call flow report and any other event that is indicated via the control port. 
 
 Understanding events
 --------------------
-An event happens when modem sends a **message** to its control port and a ``prober`` instance picks it up in order to match it with an **action**. Please refer to `Event Handling <EventHandling.rst>` to find out how to start and stop ``prober``.
+An event happens when modem sends a **message** to its control port and a ``prober`` instance picks it up in order to match it with an **action**. Please refer to `Event Handling <EventHandling.rst>`_ to find out how to start and stop ``prober``.
 
 A **message** is a string, here are some examples of messages that are sent to control port: 
-
+::
     ^BOOT:12659389,0,0,0,58
     ^RSSI:4
     ^DSFLOWRPT:00002406,00000000,00000000,00000000000A D023,00000000002FA192,0003E800,0003E800
@@ -97,7 +98,7 @@ A **message** is a string, here are some examples of messages that are sent to c
     ...
 
 An **action** is a predefined Python function of the following format: 
-
+::
     def <action_name>(modem, message):
         """<Docstring.>"""
         <code>
@@ -106,7 +107,7 @@ Matching patterns to actions
 ----------------------------
 While running, the ``prober`` matches **patterns** to **actions** by checking if a **message** matches predefined regex. If it does, the action associated with the regex is executed.  
 A **pattern-action** combo is a Python tuple consisting of a compiled regex and an **action** function respectively.
-
+::
     sample_pattern = re.compile(pattern_string)
     def samlpe_action(modem, message):
         sample_code(message)
@@ -115,27 +116,25 @@ A **pattern-action** combo is a Python tuple consisting of a compiled regex and 
 Feeding the pattern-action list to ``prober``
 ---------------------------------------------
 The ``prober`` becomes aware of your predefined pattern-actions list when it is started with the list as its argument.
-
+::
     pa_list = [sample_combo1, sample_combo2]
     modem_instance.prober.start(pa_list)
 
-
 ----------------
-
 
 **Question**
 
-I am trying to check my balance using AT commands, AT+CUSD=1,"131#"<br>
-    I try to implement that as cmd = Command(m, '+CUSD=1,"131#"')<br>
-    Not getting anything back after cmd.run().<br>
-    Tried cmd = Command(m, '+CUSD=1,"131#"', prefixed=False) as well.<br>
-    cmd = Command(m, '+CUSD=1', prefixed=False) then<br>
-    cmd.set("**131#") gives an error.
+I am trying to check my balance using AT commands, ``AT+CUSD=1,"131#"``
+I try to implement that as ``cmd = Command(m, '+CUSD=1,"131#"')``
+Not getting anything back after cmd.run().
+Tried ``cmd = Command(m, '+CUSD=1,"131#"', prefixed=False)`` as well.
+``cmd = Command(m, '+CUSD=1', prefixed=False)`` then
+``cmd.set("**131#")`` gives an error.
 
 **Answer**
 
 The reply comes from the control port so you have to write a regex and compile it then parse to modem.prober.start. I got it working using: 
-
+::
     def new_bal(modem, message):
         print(message)
     ussd_ex = re.compile(r'^\+CUSD:.')

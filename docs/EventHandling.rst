@@ -1,4 +1,4 @@
-Event Handling / Responding to events
+Event handling / responding to events
 =====================================
 Event handling functionality helps you interact with your modem: respond to RSSI change, new message delivery, incoming call flow report and more.
 
@@ -57,4 +57,4 @@ A pattern-action pair list is a list of two element tuples, each containing a re
     modem.prober.start(actions)
     # Send a message to yourself.
     modem.sms_send('+353?????????', '1234567')
-    New message arrived: '+CMTI: "SM",2\r\n'</pre>
+    New message arrived: '+CMTI: "SM",2\r\n'
