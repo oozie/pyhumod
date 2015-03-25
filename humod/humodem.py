@@ -229,11 +229,10 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
     def __init__(self, data=defaults.DATA_PORT,
                  ctrl=defaults.CONTROL_PORT):
         """Open a serial connection to the modem."""
-        self.data_port = ModemPort()
-        self.data_port.setPort(data)
-        self.data_port.setBaudrate(defaults.BAUDRATE)
+        self.data_port = ModemPort(data, defaults.BAUDRATE,
+                timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_port = ModemPort(ctrl, 9600,
-                                   timeout=defaults.PROBER_TIMEOUT)
+                timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_lock = threading.Lock()
         self.prober = Prober(self)
         atc.SetCommands.__init__(self)
