@@ -92,9 +92,9 @@ class InteractiveCommands(object):
         """
         self.ctrl_lock.acquire()
         try:
-            self.ctrl_port.write('AT+CMGS="%s"\r\n' % number)
+            self.ctrl_port.write(('AT+CMGS="%s"\r\n' % number).encode())
             # Perform a SIM test first.
-            self.ctrl_port.write(contents+chr(26))
+            self.ctrl_port.write((contents+chr(26)).encode())
             result = self.ctrl_port.return_data()
             # A text number is an integer number, returned in the
             # last returned entry of the result, just after the ": " part.
