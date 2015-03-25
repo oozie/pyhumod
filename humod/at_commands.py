@@ -4,7 +4,6 @@ import re
 import humod.errors as errors
 from warnings import warn
 
-# Deprecated decorator.
 def deprecated(dep_func):
     """Decorator used to mark functions as deprecated."""
     def warn_and_run(*args, **kwargs):
@@ -173,26 +172,6 @@ class InteractiveCommands(object):
         msg_num_str = '%d' % message_num
         _common_set(self, '+CMGD', msg_num_str)
 
-    @deprecated
-    def del_message(self, message_num):
-        """Deprecated equivalent of sms_del."""
-        return self.sms_del(message_num)
-
-    @deprecated
-    def read_message(self, message_num):
-        """Deprecated equivalent of sms_read."""
-        return self.sms_read(message_num)
-
-    @deprecated
-    def send_text(self, number, contents):
-        """Deprecated equivalent of sms_send."""
-        return self.sms_send(number, contents)
-
-    @deprecated
-    def list_messages(self, message_type='ALL'):
-        """Deprecated equivalent of sms_list."""
-        return self.sms_list(message_type)
-
     def hangup(self):
         """Hang up."""
         _common_run(self, '+CHUP', prefixed=False)
@@ -226,25 +205,6 @@ class InteractiveCommands(object):
         """Clear out a phonebook entry."""
         _common_set(self, '+CPBW', '%d' % index)
 
-    @deprecated
-    def find_pbent(self, query=''):
-        """Deprecated equivalent of pbent_find."""
-        return self.pbent_find(query)
-
-    @deprecated
-    def read_pbent(self, start_index, end_index=None):
-        """Deprecated equivalent of pbent_list."""
-        return self.pbent_read(start_index, end_index)
-
-    @deprecated
-    def del_pbent(self, index):
-        """Deprecated equivalent of pbent_del."""
-        return self.pbent_del(index)
-
-    @deprecated
-    def write_pbent(self, index, number, text, numtype=145):
-        """Deprecated equivalent of pbent_write."""
-        return self.pbent_write(index, number, text, numtype)
 
 class ShowCommands(object):
     """Show methods extract static read-only data."""
@@ -356,16 +316,6 @@ class EnterCommands(object):
     def enable_textmode(self, status=None):
         """Enable, disable or find out about current mode."""
         return self._common_enable('+CMGF', '1', '0', status)
-
-    @deprecated
-    def enter_text_mode(self):
-        """Enter text mode."""
-        _common_set(self, '+CMGF', '1')
-
-    @deprecated
-    def enter_pdu_mode(self):
-        """Enter PDU mode."""
-        _common_set(self, '+CMGF', '0')
 
 class GetCommands(object):
     """Get methods read dynamic or user-set data."""
