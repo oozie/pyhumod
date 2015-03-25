@@ -5,7 +5,7 @@ Installation
 ------------
 The installation of the package takes place in four steps: downloading the source, extracting it and system-wide installation on the elevated priviledges. The following should work for most Unix derivatives.
 ::
-    $ wget https://github.com/fmalina/pyhumod/archive/master.zip
+    $ wget https://github.com/oozie/pyhumod/archive/master.zip
     $ unzip master.zip
     $ cd download
     $ sudo python setup.py install
