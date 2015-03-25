@@ -3,8 +3,8 @@ Getting Started
 
 Installation
 ------------
-The installation of the package takes place in four steps: downloading the source, extracting it and system-wide installation on the elevated priviledges. The following should work for most Unix derivatives.::
-
+The installation of the package takes place in four steps: downloading the source, extracting it and system-wide installation on the elevated priviledges. The following should work for most Unix derivatives.
+::
     $ wget https://github.com/fmalina/pyhumod/archive/master.zip
     $ unzip master.zip
     $ cd download
@@ -18,10 +18,10 @@ Once installed, you can write your own scripts or this package from an interpret
 
 Writing your own scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~
-An example script could look as follows:::
+An example script could look as follows:
 
     #!/usr/bin/env python
-    # An example script.
+    
     import humod
     m = humod.Modem()
     model = m.show_model()
@@ -29,8 +29,8 @@ An example script could look as follows:::
 
 Using a Python interpreter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Most of the examples here are run from the standard python interpreter, but you are welcome to use ipython.::
-
+Most of the examples here are run from the standard python interpreter, but you are welcome to use ipython.
+::
     $ python3
     ...
     >>> import humod

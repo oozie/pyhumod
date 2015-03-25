@@ -21,4 +21,5 @@ When you call the ``connect()`` method of the Modem class the following happens.
 
 Please note that for pppd to start in a privileged mode the 'humod' file must be available in ``/etc/ppp/peers``, i.e. you must properly install humod package or create a 'humod' file in ``/etc/ppp/peers`` with 'noauth' as its content. 
 
-Next: Learn how to `send and receive SMS <SendReceiveText.rst>`_
+Next: Learn how to `send and receive SMS <SendReceiveText.rst>`_.
+-------------------
