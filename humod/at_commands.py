@@ -356,32 +356,27 @@ class GetCommands(object):
         return int(rssi[0])
 
     def get_pin_status(self):
-        """Inform about PIN status.
-        
-        Returns:
-            'READY' -- sim card ready to use,
-            'SIM PIN' -- PIN required,
-            'SIM PUK' -- PUK required.
-        """
+        """Inform about PIN status."""
         pin_info = _common_get(self, '+CPIN')[0]
-        return pin_info
+        return {
+            'READY': 'Sim card ready to use',
+            'SIM PIN': 'PIN required',
+            'SIM PUK': 'PUK required'
+        }[pin_info]
 
     def get_pdp_context(self):
         """Read PDP context entries."""
         pdp_context_data = _common_get(self, '+CGDCONT')
-        data = _enlist_data(pdp_context_data)
-        return data
-
+        return _enlist_data(pdp_context_data)
+    
     @deprecated
     def get_mode(self):
-        """Get current mode.
-        
-        Returns:
-            0 -- PDU mode,
-            1 -- Text mode.
-        """
+        """Get current mode."""
         current_mode = _common_get(self, '+CMGF')[0]
-        return int(current_mode)
+        return {
+            0: 'PDU mode',
+            1: 'Text mode'
+        }[int(current_mode)]
 
 
 def _transform(pdp_item):
