@@ -2,7 +2,7 @@
 
 import serial
 import threading
-import Queue
+import queue
 import time
 import os
 from humod import errors
@@ -73,7 +73,7 @@ class Prober(object):
     """Class responsible for reading in and queueing of control data."""
 
     def __init__(self, modem):
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self._interpreter = None
         self._feeder = None
         self.modem = modem
