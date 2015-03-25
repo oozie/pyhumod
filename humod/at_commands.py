@@ -14,7 +14,8 @@ def deprecated(dep_func):
     return warn_and_run
 
 class Command(object):
-    """Class defining generic perations performed on AT commands."""
+    """Class defining generic operations performed on AT commands.
+    Methods return lists of strings."""
 
     def __init__(self, modem, cmd, prefixed=True):
         """Constructor for Command class."""
@@ -22,81 +23,54 @@ class Command(object):
         self.modem = modem
         self.prefixed = prefixed
 
-    def run(self):
-        r"""Send the AT command followed by the '\r' character to the modem.
-        
-        Returns:
-            List of strings.
-        """
+    def _exe(self, val):
+        r"""Send the AT command followed by val and the '\r' character to the modem."""
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '', self.prefixed)
-        
+        return self.modem.ctrl_port.send_at(self.cmd, val, self.prefixed)
+
+    def run(self):
+        return self._exe('')
 
     def get(self):
-        r"""Send the AT command followed by the '?\r' characters to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '?', self.prefixed)
+        return self._exe('?')
 
     def set(self, value):
-        r"""Send the 'AT<+CMD>=<value>\r' string to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '=%s' % value,
-                                         self.prefixed)
+        return self._exe('=%s' % value)
 
     def dsc(self):
-        r"""Send the AT command followed by the '=?\r' characters to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '=?', self.prefixed)
+        return self._exe('=?')
 
 
+"""Boilerplate for most methods based on Command.run/get/dsc/set()"""
 def _common_run(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.run()."""
-    info_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = info_cmd.run()
-        return data
+        return cmd.run()
     finally:
         modem.ctrl_lock.release()
 
 def _common_get(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.get()."""
-    data_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = data_cmd.get()
-        return data
+        return cmd.get()
     finally:
         modem.ctrl_lock.release()
 
 def _common_dsc(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.dsc()."""
-    data_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = data_cmd.dsc()
-        return data
+        return cmd.dsc()
     finally:
         modem.ctrl_lock.release()
 
 def _common_set(modem, at_cmd, value, prefixed=True):
-    """Boilerplate for most methods based on Command.set()."""
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = Command(modem, at_cmd, prefixed).set(value)
-        return data
+        return cmd.set(value)
     finally:
         modem.ctrl_lock.release()
 
