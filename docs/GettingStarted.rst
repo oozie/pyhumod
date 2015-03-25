@@ -5,12 +5,12 @@ Installation
 ------------
 The installation of the package takes place in four steps: downloading the source, extracting it and system-wide installation on the elevated priviledges. The following should work for most Unix derivatives.::
 
-    $ wget https://github.com/oozie/pyhumod/archive/master.zip
+    $ wget https://github.com/fmalina/pyhumod/archive/master.zip
     $ unzip master.zip
     $ cd download
     $ sudo python setup.py install
 
-Please note this package requires `pySerial <http://pyserial.wiki.sourceforge.net/pySerial>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.rst>`_ to talk to HAL. pySerial is a required dependency, dbus-python can be installed if you want to take advantage of the humod.detect module. 
+Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html>`_ to talk to HAL. pySerial is a required dependency, dbus-python can be installed if you want to take advantage of the humod.detect module. 
 
 Usage Guide
 -----------
@@ -29,14 +29,14 @@ An example script could look as follows:::
 
 Using a Python interpreter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-I use ipython, however, most of the interpreter examples here are run from the standard ``/usr/bin/python``.::
+Most of the examples here are run from the standard python interpreter, but you are welcome to use ipython.::
 
-    $ ipython
+    $ python3
     ...
-    In [1]: import humod
-    In [2]: mod = humod.Modem('/dev/ttyUSB0', '/dev/ttyUSB1')
-    In [3]: mod.show_model()
-    Out[3]:'E270'
+    >>> import humod
+    >>> mod = humod.Modem('/dev/ttyUSB0', '/dev/ttyUSB1')
+    >>> mod.show_model()
+    >>> 'E270'
 
 Instantiating a ``Modem()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +48,7 @@ is equal to::
 
     m = humod.Modem('/dev/ttyUSB0', '/dev/ttyUSB1')
 
-but some MacOS X users may want to execute the following:::
+but some MacOS X users may want to execute the following::
 
     m = humod.Modem('/dev/cu.HUAWEIMobile-Modem', '/dev/cu.HUAWEIMobile-Pcui')
 
