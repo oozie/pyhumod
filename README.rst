@@ -19,11 +19,13 @@ Supported Features
 
 License
 -------
-PyHumod is considered free software. Please refer to the LICENSE file.
+PyHumod is considered free software. Please refer to `LICENSE <LICENSE.rst>`_.
+
 
 Installation
 ------------
-Please refer to the INSTALL file.
+Please refer to `INSTALL <INSTALL.rst>`_.
+
 
 Documentation
 -------------
@@ -36,5 +38,5 @@ The project wiki is also stored in a Mercurial repository:
 
 Links
 -----
-http://pyhumod.googlecode.com/ - Project Homepage on Google Code.
-http://pyhumod.ooz.ie          - PyHumod central.
+* http://pyhumod.googlecode.com/ - Project Homepage on Google Code.
+* http://pyhumod.ooz.ie          - PyHumod central.
