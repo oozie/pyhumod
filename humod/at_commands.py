@@ -120,7 +120,7 @@ class InteractiveCommands(object):
         try:
             message_lister = Command(self, '+CMGL')
             messages_data = message_lister.set('"%s"' % message_type)
-            return _enlist_data(messages_data, 4)
+            return _enlist_data(messages_data)
         finally:
             self.ctrl_lock.release()
 
