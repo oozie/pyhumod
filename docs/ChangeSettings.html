@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Changing device settings</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p><a href="../">Home</a> › <a href="./">Docs</a></p><hr>
+
+<h1>Changing device settings</h1>
+<p>A <i>setting</i> is an attribute of the device that can be set programatically and will not change even if the device is rebooted. Changing settings of a modem device is done by the <code>set_*</code> methods of the Modem() class.</p>
+<h1>The <code>set_*</code> methods</h1>
+<h2>set_pdp_context(pdp_id, proto, apn, ip_addr, d_comp, h_comp)</h2>
+<p>Sets <a href="http://www.tutorialspoint.com/gprs/gprs_pdp_context.htm" rel="nofollow">Packet Data Protocol</a> context. </p>
+<h2>set_service_center(sca, tosca)</h2>
+<p>Sets the service center address and the type of the service center address, where <code>tosca</code> is one of the following: </p>
+<p>
+    
+    128 - unknown
+    <br> 129 - national
+    <br> 145 - international
+    <br> 161 - national
+</p>
+<h3>Next: Learn how to <a href="EventHandling.html">handle events</a></h3>
+</body>
+</html>

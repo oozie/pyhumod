@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Extracting static information from the device</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p><a href="../">Home</a> › <a href="./">Docs</a></p><hr>
+
+<h1>Extracting static information from the device</h1>
+<p><i>Static information</i> can't be easily modified or changed; a change most likely follows some firmware update. Most 3G modems implement a number of standarized AT Hayes commands for reading static information about the device.  </p><h1><!--The_show__*_methods-->The show<code>_*</code> methods</h1><p>The <code>show_*</code> methods implemented in the Modem class are responsible for extracting static information from the device. None of the <code>show_*</code> methods takes external arguments. </p>
+<h2>show_manufacturer()</h2><p>Returns a string containing device manufacturer name. </p><pre>&gt;&gt;&gt; modem.show_manufacturer()
+'huawei'</pre>
+<h2>show_model()</h2>
+<p>Returns a string containing the device model. </p><pre>&gt;&gt;&gt; modem.show_model()
+'E270'</pre>
+<h2>show_revision()</h2>
+<p>Returns a string containing the firmware revision. </p>
+<pre>&gt;&gt;&gt; modem.show_revision()
+'11.304.16.00.00'</pre>
+<h2><!--show_sn()-->show_sn()</h2><p>Returns a string with the serial number of the device. </p><pre>&gt;&gt;&gt; modem.show_sn()
+'CD2AE12345678901'</pre><h2><!--show_imei()-->show_imei()<!--show_imei()--></h2><p>Returns a string with the IMEI number. </p><pre>&gt;&gt;&gt; modem.show_imei()
+'???????????????'</pre>
+<h2>show_hardcoded_operators()</h2>
+<p>Returns a dictionary with operator IDs and operator names strings as key and value pairs respectively. </p><pre>&gt;&gt;&gt; modem.show_hardcoded_operators()
+{'544011': 'Blue Sky', '35230': 'DIGICEL', '61104': 'CKY-Areeba', '358030': 'Cingular', '61101': 'Spacetel Guinee ', '40555': [...]}</pre>
+<h2>show_who_locked()</h2>
+<p>Returns a list with two operator IDs strings. I'm not sure why the modem returns a pair of operator IDs, so I decided that the method does the same just in case. </p><pre>&gt;&gt;&gt; modem.show_who_locked()
+['27202', '27202']
+&gt;&gt;&gt; ops = modem.show_hardcoded_operators()
+&gt;&gt;&gt; lockop = modem.show_who_locked()[0]
+&gt;&gt;&gt; ops[lockop]
+'02 - IRL'</pre>
+<p>Unfortunately, of all the modems that got through my hands the only one to support this feature is E270. </p><h3>Next: Find out more about the modem state by reading <a href="GetDynamicInfo.html">dynamic device information</a>.</h3>
+
+</body>
+</html>

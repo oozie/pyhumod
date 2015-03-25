@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Development Guide</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p><a href="../">Home</a> › <a href="./">Docs</a></p><hr>
+
+<h1>Development Guide</h1>
+<h2>Find out what AT commands your modem supports</h2>
+<p>Most of the mobile devices implement an <code>AT+CLAC</code> command. It outputs a list of comma-separated AT commands (without the 'AT' prefix) supported by the device.</p>
+<p>You can list the AT commands that your device supports in the following way:
+<pre>&gt;&gt;&gt; import humod
+&gt;&gt;&gt; from humod.at_commands import Command
+&gt;&gt;&gt; m = humod.Modem()
+&gt;&gt;&gt; list_all = Command(m, '+CLAC')
+&gt;&gt;&gt; supported_commands_string = list_all.run()[0]
+&gt;&gt;&gt; at_cmd_list = supported_commands_string.split(',')
+&gt;&gt;&gt; at_cmd_list
+['C', '&amp;D', '&amp;F', '&amp;V', 'E', 'I', 'L', ... ]
+&gt;&gt;&gt; len(at_cmd_list)
+188</pre>
+<p>My Huawei E270 Modem supports 188 AT commands.</p>
+<h1>Implement new methods</h1>
+<p>The <code>humod.at_commands.Command</code> class can be used to implement AT command functionality. </p><p>Let's assume that the 'AT+CMD' is a generic AT command. From any mobile device viewpoint, you can issue an AT command in 4 ways: </p><ul><li>"AT+CMD" - tell the modem to do something, (<b>run</b>) </li><li>"AT+CMD?" - query the current setting in the memory or the current state, (<b>get</b>) </li><li>"AT+CMD=?" - see what are the possible values to set, (<b>dsc</b> for describe) </li><li>"AT+CMD=value" - set a value for a given command/setting. (<b>set</b>) </li></ul><p>The <code>humod.at_commands.Command</code> class implements four methods to run, query or set values of the AT commands. The methods names are run(), get(), dsc() and set(). </p>
+<h2>Sample command with prefixed output</h2>
+<p>Let's take the <code>AT^SN</code> command as an example. The command only supports the <b>run</b> operation and when issued to a modem it returns a string containing the command prefix ('<code>^SN: </code>') followed by a serial number of the device. </p><p>You can use the the <code>Command</code> class in order to extract the serial number into a Python object. </p><pre>&gt;&gt;&gt; show_sn = Command(m, '^SN')
+&gt;&gt;&gt; show_sn.run()
+['1234567890...']</pre>
+<h3><!--What_happened?-->What happened?</h3><ol><li>You created a Command instance and told it to issue the <code>AT^SN</code> AT command. </li><li>With help of the <code>run()</code> method, you have sent the <code>AT^SN\r\n</code> string to the modem. </li><li>In response, one line of output was returned (one and only element in the list). The modem returned the <code>^SN: 1234567890...</code> string (prefixed with command name), </li><li>The .run() method stripped the prefix, packed the line into a list and returned it. </li></ol>
+<h2>Sample command with unprefixed output</h2><p>By default, any method of the Command class instance will only accept output prefixed with the AT-command + colon + space combination (i.e. <code>'^SN: '</code>). This behaviour can be altered by specifying <code>prefixed=False</code> during Command class instanciation. </p><p>The class of <code>AT+GM[IMR]</code> commands return unprefixed output, i.e. each line returned from the modem is the actual output value and should not be stripped any further. </p><p>Let's implement <code>AT+GMM</code> from scratch. </p><pre>&gt;&gt;&gt; show_model = Command(m, '+GMM', prefixed=False)
+&gt;&gt;&gt; show_model.run()
+['E270']</pre>
+<h2>Setting / getting commands.</h2>
+<p>In most cases, the same AT command exists to set and get a value. The only difference is in the way we issue the command to a modem. We set values by sending "<code>AT+CMD="value"\r\n</code>" string. The values can be retrieved using the same command, but followed by a different parameter - "<code>AT+CMD?</code>" - simply followed by a question mark. </p><p>This is a job of the <code>.set()</code> and <code>.get()</code> methods of the <code>Command</code> class.</p>
+<h2>Sample value setter/getter</h2>
+<p>In this example we will use the <code>+CMGF</code> AT command which is responsible for switching between the Text and PDU modes. To see which mode we are in, we should query the modem with the <code>.get()</code> method of Command class instance. </p><p>In order to switch between modes, the <code>.set()</code> method of the same instance must be used. If we set <code>+CMGF</code>'s value to 1 it means we are just entered the Text mode. A value of 0 reflects PDU mode. </p><pre>&gt;&gt;&gt; mode_cmd = Command(m, '+CMGF')
+&gt;&gt;&gt; set_mode = mode_cmd.set
+&gt;&gt;&gt; get_mode = mode_cmd.get
+&gt;&gt;&gt; get_mode()
+['1']
+&gt;&gt;&gt; set_mode("0")
+&gt;&gt;&gt; get_mode()
+['0']
+&gt;&gt;&gt; set_mode("1")
+&gt;&gt;&gt; get_mode()
+['1']
+&gt;&gt;&gt;</pre>
+<h1>Respond to events</h1>
+<p><a href="EventHandling">Event handling functionality</a> will help you build interactive apps for your modem: respond to RSSI change, new message delivery, incoming call flow report and any other event that is indicated via the control port.  </p>
+<h2>Understanding events</h2>
+<p>An event happens when modem sends a <b>message</b> to its control port and a <code>prober</code> instance picks it up in order to match it with an <b>action</b>. Please refer to <a href="EventHandling.html">Event Handling</a> to find out how to start and stop <code>prober</code>.  </p><p>A <b>message</b> is a string, here are some examples of messages that are sent to control port: </p><pre>^BOOT:12659389,0,0,0,58
+^RSSI:4
+^DSFLOWRPT:00002406,00000000,00000000,00000000000A D023,00000000002FA192,0003E800,0003E800
++CMTI: "SM",0
+...</pre><p>An <b>action</b> is a predefined Python function of the following format: </p><pre>def &lt;action_name&gt;(modem, message):
+"""&lt;Docstring.&gt;"""
+&lt;code&gt;</pre>
+<h2>Matching patterns to actions</h2>
+<p>While running, the <code>prober</code> matches <b>patterns</b> to <b>actions</b> by checking if a <b>message</b> matches predefined regex. If it does, the action associated with the regex is executed.  </p><p>A <b>pattern-action</b> combo is a Python tuple consisting of a compiled regex and an <b>action</b> function respectively. </p><pre>sample_pattern = re.compile(pattern_string)
+def samlpe_action(modem, message):
+sample_code(message)
+sample_combo = (sample_pattern, sample_action)</pre><h2>Feeding the pattern-action list to <code>prober</code></h2><p>The <code>prober</code> becomes aware of your predefined pattern-actions list when it is started with the list as its argument.  </p><pre>pa_list = [sample_combo1, sample_combo2]
+modem_instance.prober.start(pa_list)</pre>
+<hr>
+
+
+<p>Question
+
+<p>I am trying to check my balance using AT commands, AT+CUSD=1,"131#"<br>
+    I try to implement that as cmd = Command(m, '+CUSD=1,"131#"')<br>
+    Not getting anything back after cmd.run().<br>
+    Tried cmd = Command(m, '+CUSD=1,"131#"', prefixed=False) as well.<br>
+    cmd = Command(m, '+CUSD=1', prefixed=False) then<br>
+    cmd.set("</b>131#") gives an error.</p>
+<p>Answer
+<p>The reply comes from the control port so you have to write a regex and compile it then parse to modem.prober.start. I got it working using: </p>
+<pre>def new_bal(modem, message):
+    print(message)
+ussd_ex = re.compile(r'^\+CUSD:.')
+ussd_act = (ussd_ex, new_bal)
+actions = ussd_act
+m.prober.start(actions)
+ussd = Command(m, "+CUSD")
+ussd.set("1,\"131#\",15")
+</pre>
+</body>
+</html>

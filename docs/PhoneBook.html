@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add, remove, update and search SIM phonebook entries</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p><a href="../">Home</a> › <a href="./">Docs</a></p><hr>
+
+<h1>Manipulating SIM Phonebook</h1>
+<i>Adding, removing, updating and searching for SIM phonebook entries.</i>
+<p>It is possible to manipulate (add, remove, update) the content of the SIM card phonebook and to read and look for phonebook entries. The set of <code>pbent_*</code> methods of the <code>Modem</code> class have been implemented for that purpose. </p>
+<h1>The <code>pbent_*</code> methods</h1>
+<h2><code>pbent_find(query='')</code></h2>
+<p>Searches through the phonebook to find queries starting with the <code>query</code> string argument. If <code>query</code> is an empty string (default) then all queries in the phonebook will be returned. </p><p>find_pbent raises AtCommandError if no entries were found. </p>
+<h2><code>pbent_read(start_index, [end_index])</code>
+</h2>
+<p>Reads a phonebook entry in by its index or a range of addresses if two integer arguments are passed. </p><p>If only one argument is specified and the entry exists, it will return a four element list of the following format: <i><code>[ index, phone_number, number_type, text ]</code></i> where  <ul><li><code>index</code> is the message index, </li>
+    <li><code>phone_number</code> is a string with the phone number stored at the index, </li>
+    <li><code>number_type</code> is an integer representing phone number type, </li>
+    <li><code>text</code> is a text string value for the entry index. </li>
+</ul>
+<p>If two arguments are specified, it will return a list of lists (the above) in a range between <code>start_index</code> and <code>end_index</code>. </p>
+<p>If <code>end_index</code> is greater than <code>start_index</code> the list will be reversed. </p>
+<h2><code>pbent_write(index, number, text, numtype=145)</code></h2>
+<p>Writes a phonebook entry with values as specified by the four arguments. </p>
+<h2><code>pbent_del(index)</code></h2>
+<p>Clears out a phonebook entry held at <code>index</code>. </p>
+</body>
+</html>
