@@ -1,7 +1,7 @@
 MANIFEST
 LICENSE
-README
-INSTALL
+README.rst
+INSTALL.rst
 setup.py
 conf/humod
 conf/options
