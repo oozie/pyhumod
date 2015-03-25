@@ -1,15 +1,4 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """Exceptions and error-handling methods."""
-
-__author__ = 'Slawek Ligus <root@ooz.ie>'
 
 ERROR_CODES = ['COMMAND NOT SUPPORT', 'ERR', 'NO CARRIER', 'BUSY']
 

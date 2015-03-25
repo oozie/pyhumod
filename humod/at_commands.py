@@ -1,15 +1,4 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """Classes and methods for handling AT commands."""
-
-__author__ = 'Slawek Ligus <root@ooz.ie>'
 
 import re
 import humod.errors as errors
