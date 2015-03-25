@@ -1,22 +1,35 @@
-What is PyHumod?
-----------------
+Using Huawei modems in Python
+=============================
 PyHumod is a Python package that will help you write your own apps for Huawei and compatible modems.
-See `sample apps <docs/CoolApps.rst>`. 
 
-Supported Features
+For a kick-start see the `Getting Started <docs/GettingStarted.rst>`_ or `sample apps <docs/CoolApps.rst>`_. 
+
+Supported features
 ------------------
-* Connecting and disconnecting to the network with pppd.
-* Sending and receiving text messages.
-* Showing static device information.
-* Displaying dynamic device information.
-* Manipulating modem settings.
-* Event handling.
-* SIM Phonebook manipulation.
+
+* `Connecting and disconnecting to the network with pppd <docs/ConnectDisconnect.rst>`_
+* `Sending and receiving text messages <docs/SendReceiveText.rst>`_
+    * Getting information about the SMS service center
+    * Enabling/disabling sms notifications
+    * Listing/reading/deleting messages
+* `Showing static device information <docs/ShowStaticInfo.rst>`_:
+    * Manufacturer, Model, Revision, Serial Number,
+    * IMEI number,
+    * Hardcoded operators,
+    * Locking operator
+* `Displaying dynamic device information <docs/GetDynamicInfo.rst>`_
+* `Manipulating modem settings <docs/ChangeSettings.rst>`_
+* `Event handling <docs/EventHandling.rst>`_
+* `SIM Phonebook manipulation <docs/PhoneBook.rst>`_
+* `Sample applications <docs/CoolApps.rst>`_
+
+See also `Development Guide <docs/DevelGuide.rst>`_.
+
 
 ------
 
 * `Installation <INSTALL.rst>`_
-* `Documentation <docs/index.rst>`_
+* `Documentation <docs/GettingStarted.rst>`_
 * `License <LICENSE.rst>`_
 
 Links
