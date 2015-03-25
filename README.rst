@@ -13,9 +13,10 @@ Supported Features
 * Event handling.
 * SIM Phonebook manipulation.
 
+------
 
 * `Installation <INSTALL.rst>`_
-* `Documentation <docs/>`_
+* `Documentation <docs/index.rst>`_
 * `License <LICENSE.rst>`_
 
 Links

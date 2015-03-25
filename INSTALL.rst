@@ -1,8 +1,7 @@
 Installation
 ============
 
-Install from the latest source code
------------------------------------
+Install from the latest source code::
 
     $ git clone https://github.com/oozie/pyhumod.git
     $ cd pyhumod

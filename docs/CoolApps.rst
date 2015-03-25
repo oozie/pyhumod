@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Sample applications</title>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<p><a href="../">Home</a> › <a href="./">Docs</a></p><hr>
+Sample applications
+===================
 
-<h1>Sample applications</h1>
-<h1>sms_exec.py</h1>
-<p>The program executes remote commands sent in via SMS and replies with the command output. </p>
+sms_exec.py
+-----------
+The program executes remote commands sent in via SMS and replies with the command output.
+
 <pre>
 #!/usr/bin/env python
 # sms_exec.py
@@ -48,6 +42,5 @@ if __name__=='__main__':
         except KeyboardInterrupt:
             break
             modem.prober.stop()
-    print('Exiting.')</pre>
-</body>
-</html>
+    print('Exiting.')
+</pre>
