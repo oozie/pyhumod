@@ -165,7 +165,12 @@ class ModemPort(serial.Serial):
         data = []
         while 1:
             # Read in one line of input.
-            input_line = self.readline().decode().rstrip()
+            try:
+                input_line = self.readline().decode().rstrip()
+            except serial.serialutil.SerialException:
+                time.sleep(.2)
+                continue
+                
             # Check for errors and raise exception with specific error code.
             errors.check_for_errors(input_line)
             if input_line == 'OK':
