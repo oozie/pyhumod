@@ -1,8 +1,8 @@
-Event handling / responding to events
+Event handling & responding to events
 =====================================
 Event handling functionality helps you interact with your modem: respond to RSSI change, new message delivery, incoming call flow report and more.
 
-To follow the rest of the examples you have to create an instance of a Modem class: 
+To follow the rest of the examples you have to create an instance of a ``Modem`` class: 
 
 .. code:: python
 
@@ -11,7 +11,7 @@ To follow the rest of the examples you have to create an instance of a Modem cla
 
 Event handling how-to
 ---------------------
-Event handling is possible with the ``Prober()`` class. Each humod.Modem instance should have exactly one instance of Prober, located at ``instance.prober`` (in our case ``modem.prober``). By default Prober is stopped, it can be turned on by calling it's ``start()`` method. Analogically, it can be stopped by calling its ``.stop()`` method. 
+Event handling is possible with the ``Prober()`` class. Each ``humod.Modem`` instance should have exactly one instance of ``Prober``, located at ``instance.prober`` (in our case ``modem.prober``). By default ``Prober`` is stopped, it can be turned on by calling it's ``start()`` method. Analogically, it can be stopped by calling its ``.stop()`` method. 
 
 .. code:: python
 

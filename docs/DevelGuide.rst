@@ -51,7 +51,7 @@ What happened?
 1. You created a Command instance and told it to issue the ``AT^SN`` AT command.
 2. With help of the ``run()`` method, you have sent the ``AT^SN\r\n`` string to the modem.
 3. In response, one line of output was returned (one and only element in the list). The modem returned the ``^SN: 1234567890...`` string (prefixed with command name),
-4. The .run() method stripped the prefix, packed the line into a list and returned it.
+4. The ``.run()`` method stripped the prefix, packed the line into a list and returned it.
 
 Sample command with unprefixed output
 -------------------------------------
@@ -149,7 +149,7 @@ The ``prober`` becomes aware of your predefined pattern-actions list when it is 
 
 **Answer**
 
-The reply comes from the control port so you have to write a regex and compile it then parse to modem.prober.start. I got it working using: 
+The reply comes from the control port so you have to write a regex and compile it then parse to ``modem.prober.start``. I got it working using: 
 
 .. code:: python
 

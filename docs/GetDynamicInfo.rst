@@ -4,7 +4,7 @@ Dynamic device information
 
 Data that is easily and frequently modified and can be freely read from the modem device can be defined as Dynamic device information. Extract this kind of data using ``get_*`` methods of the ``Modem()`` class. None of the ``get_*`` methods take any external arguments. To manipulate SIM Phonebook entries see the `phonebook manipulation <PhoneBook.rst>`_.
 
-The ``get_\*`` methods
+The ``get_*`` methods
 =====================
 
 In order to run any of the following methods, instanciate the ``Modem()`` class:
@@ -35,8 +35,8 @@ Returns descriptive information about an error that occured as last.
 get_networks()
 --------------
 Scans for networks, and if successful returns a nested list. A list of strings representing a network has a following format: 
-``['VAL1','Op long name', 'Op short name', 'Operator Number', 'VAL2']`` 
-Where VAL1 and VAL2 have something to do with network types, but I couldn't find any documentation as to what exactly.
+``['VAL1', 'Op long name', 'Op short name', 'Operator Number', 'VAL2']`` 
+where VAL1 and VAL2 have something to do with network types, but I couldn't find any documentation as to what exactly.
 
 .. code:: python
 
