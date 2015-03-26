@@ -5,7 +5,7 @@ Adding, removing, updating and searching for SIM phonebook entries.
 
 It is possible to manipulate (add, remove, update) the content of the SIM card phonebook and to read and look for phonebook entries. The set of ``pbent_*`` methods of the ``Modem`` class have been implemented for that purpose. 
 
-The ``pbent_*`` methods
+The ``pbent_\*`` methods
 -----------------------
 
     pbent_find (query='')
