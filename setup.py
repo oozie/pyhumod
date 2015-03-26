@@ -1,12 +1,8 @@
-#!/usr/bin/env python
-
 """Setup file for PyHumod package."""
 
 import os
 from distutils.core import setup
-from humod import __version__
-
-__author__ = 'Slawek Ligus <root@ooz.ie>'
+from humod import __version__, __author__
 
 CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod'])]
 try:
@@ -18,9 +14,8 @@ except OSError:
 setup(name='pyhumod',
       version=__version__,
       packages=['humod'],
-      description='Python interface to Huawei modems.',
-      long_description='A Python package that talks to Huawei'
-                       ' (and compatible) modems.',
+      description='Access SMS, GSM and 3G features of Huawei and '
+                  'compatible modems via clean and pragmatic Python API',
       author='Slawek Ligus',
       author_email='root@ooz.ie',
       url='https://github.com/oozie/pyhumod',

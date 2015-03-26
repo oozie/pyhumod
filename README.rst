@@ -1,6 +1,6 @@
-Using Huawei modems in Python
-=============================
-PyHumod is a Python package that will help you write your own apps for Huawei and compatible modems.
+SMS, GSM and 3G connectivity using Huawei modems in Python
+==========================================================
+Access SMS, GSM and 3G features of Huawei and compatible modems from your own apps via clean and pragmatic Python API.
 
 For a kick-start see the `Getting Started <docs/GettingStarted.rst>`_ or `sample apps <docs/CoolApps.rst>`_. 
 
