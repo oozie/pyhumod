@@ -1,12 +1,3 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """Action functions to be taken in response to events."""
 
 import re
@@ -14,7 +5,7 @@ import re
 # pylint: disable-msg=W0613
 def call_notification(modem, message):
     """Execute when someone is calling."""
-    print 'Someone is calling'
+    print('Someone is calling')
 
 def null_action(modem, message):
     """Take no action."""
@@ -35,7 +26,7 @@ def flow_report_update(modem, message):
 
 def mode_update(modem, message):
     """Update connection mode."""
-    # Info taken from:
+    # Source info is no longer available, taken from:
     # https://forge.betavine.net/pipermail/vodafonemobilec-devel/
     # 2007-November/000044.html
     mode_dict = {'0': 'No service', '1': 'AMPS', '2': 'CDMA', '3': 'GSM/GPRS',
@@ -47,7 +38,7 @@ def mode_update(modem, message):
 
 def new_message(modem, message):
     """New message action."""
-    print 'New message arrived.'
+    print('New message arrived.')
 
 PATTERN = {'incoming call': re.compile(r'^RING\r\n'),
            'new sms': re.compile(r'^\+CMTI:.*'),
@@ -66,4 +57,3 @@ STANDARD_ACTIONS = [(PATTERN['incoming call'], call_notification),
                     (PATTERN['mode update'], mode_update),
                     (PATTERN['rssi update'], rssi_update),
 		    (PATTERN['flow report'], flow_report_update)]
-

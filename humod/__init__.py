@@ -1,12 +1,3 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """pyhumod provides user friendly interface to advanced features of 3g modems.
 
 Modules:

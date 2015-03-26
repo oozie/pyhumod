@@ -1,20 +1,12 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """This module provides default values for different OS types."""
-
-__author__ = 'Slawek Ligus <root@ooz.ie>'
 
 import os
 
 DATA_PORT = '/dev/ttyUSB0'
 CONTROL_PORT = '/dev/ttyUSB1'
+# Point-to-Point Protocol - The pppd daemon works together with the kernel
+# PPP driver to establish and maintain a PPP link with another system
+# (called the peer) and to negotiate...
 PPPD_PATH = '/usr/sbin/pppd'
 PROBER_TIMEOUT = 0.5
 BAUDRATE = '115200'

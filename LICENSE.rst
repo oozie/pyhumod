@@ -1,7 +1,7 @@
 PyHumod LICENSE
 ===============
 
-Copyright (C) 2009 by Slawek Ligus. All rights reserved.
+Copyright (C) 2015 by Slawek Ligus and contributors. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -15,7 +15,7 @@ are met:
 3. The name of the author may not be used to endorse or promote products
    derived from this software without specific prior written permission. 
  
-THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE

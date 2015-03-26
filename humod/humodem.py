@@ -1,19 +1,8 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """This module defines the base Modem() class."""
-
-__author__ = 'Slawek Ligus <root@ooz.ie>'
 
 import serial
 import threading
-import Queue
+import queue
 import time
 import os
 from humod import errors
@@ -34,7 +23,7 @@ class Interpreter(threading.Thread):
     def run(self):
         """Keep interpreting messages while active attribute is set."""
         while self.active:
-            self.interpret(self.queue.get())
+            self.interpret(self.queue.get().decode())
 
     def interpret(self, message):
         """Match message pattern with an action to take.
@@ -77,14 +66,14 @@ class QueueFeeder(threading.Thread):
     def stop(self):
         """Stop the queue feeder thread."""
         self.active = False
-        self.ctrl_port.write('\r\n')
+        self.ctrl_port.write(b'\r\n')
 
 
 class Prober(object):
     """Class responsible for reading in and queueing of control data."""
 
     def __init__(self, modem):
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self._interpreter = None
         self._feeder = None
         self.modem = modem
@@ -145,10 +134,10 @@ class ModemPort(serial.Serial):
         Returns:
             List of strings.
         """
-        self.write('AT%s%s\r' % (cmd, suffix))
+        self.write(('AT%s%s\r' % (cmd, suffix)).encode())
         # Read in the echoed text.
         # Check for errors and raise exception with specific error code.
-        input_line = self.readline()
+        input_line = self.readline().decode()
         errors.check_for_errors(input_line)
         # Return the result.
         if prefixed:
@@ -173,10 +162,15 @@ class ModemPort(serial.Serial):
         Raises:
             AtCommandError: If an error is returned by the modem.
         """
-        data = list()
+        data = []
         while 1:
             # Read in one line of input.
-            input_line = self.readline().rstrip()
+            try:
+                input_line = self.readline().decode().rstrip()
+            except serial.serialutil.SerialException:
+                time.sleep(.2)
+                continue
+                
             # Check for errors and raise exception with specific error code.
             errors.check_for_errors(input_line)
             if input_line == 'OK':
@@ -215,9 +209,9 @@ class ConnectionStatus(object):
                    ('Downlink (B/s)', self.downlink),
                    ('Seconds uptime', self.link_uptime),
                    ('Mode', self.mode))
-        print
+        print()
         for item in mapping:
-            print format % item
+            print(format % item)
 
 
 class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
@@ -235,11 +229,10 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
     def __init__(self, data=defaults.DATA_PORT,
                  ctrl=defaults.CONTROL_PORT):
         """Open a serial connection to the modem."""
-        self.data_port = ModemPort()
-        self.data_port.setPort(data)
-        self.data_port.setBaudrate(defaults.BAUDRATE)
+        self.data_port = ModemPort(data, defaults.BAUDRATE,
+                timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_port = ModemPort(ctrl, 9600,
-                                   timeout=defaults.PROBER_TIMEOUT)
+                timeout=defaults.PROBER_TIMEOUT)
         self.ctrl_lock = threading.Lock()
         self.prober = Prober(self)
         atc.SetCommands.__init__(self)
@@ -254,12 +247,12 @@ class Modem(atc.SetCommands, atc.GetCommands, atc.ShowCommands,
         if not self._pppd_pid:
             data_port = self.data_port
             data_port.open()
-            data_port.write('ATZ\r\n')
+            data_port.write(b'ATZ\r\n')
             data_port.return_data()
             if not dialtone_check:
-                data_port.write('ATX3\r\n')
+                data_port.write(b'ATX3\r\n')
                 data_port.return_data()
-            data_port.write('ATDT%s\r\n' % self._dial_num)
+            data_port.write(('ATDT%s\r\n' % self._dial_num).encode())
             data_port.readline()
             status = data_port.readline()
             if status.startswith('CONNECT'):

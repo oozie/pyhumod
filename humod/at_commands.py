@@ -1,21 +1,9 @@
-#
-# Copyright 2009 by Slawek Ligus <root@ooz.ie>
-#
-# Please refer to the LICENSE file for conditions 
-#  under which this software may be distributed.
-#
-#   Visit http://pyhumod.ooz.ie/ for more info.
-#
-
 """Classes and methods for handling AT commands."""
 
-__author__ = 'Slawek Ligus <root@ooz.ie>'
-
-import re
+import re, csv
 import humod.errors as errors
 from warnings import warn
 
-# Deprecated decorator.
 def deprecated(dep_func):
     """Decorator used to mark functions as deprecated."""
     def warn_and_run(*args, **kwargs):
@@ -26,7 +14,8 @@ def deprecated(dep_func):
     return warn_and_run
 
 class Command(object):
-    """Class defining generic perations performed on AT commands."""
+    """Class defining generic operations performed on AT commands.
+    Methods return lists of strings."""
 
     def __init__(self, modem, cmd, prefixed=True):
         """Constructor for Command class."""
@@ -34,81 +23,54 @@ class Command(object):
         self.modem = modem
         self.prefixed = prefixed
 
-    def run(self):
-        r"""Send the AT command followed by the '\r' character to the modem.
-        
-        Returns:
-            List of strings.
-        """
+    def _exe(self, val):
+        r"""Send the AT command followed by val and the '\r' character to the modem."""
         self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '', self.prefixed)
-        
+        return self.modem.ctrl_port.send_at(self.cmd, val, self.prefixed)
+
+    def run(self):
+        return self._exe('')
 
     def get(self):
-        r"""Send the AT command followed by the '?\r' characters to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '?', self.prefixed)
+        return self._exe('?')
 
     def set(self, value):
-        r"""Send the 'AT<+CMD>=<value>\r' string to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '=%s' % value,
-                                         self.prefixed)
+        return self._exe('=%s' % value)
 
     def dsc(self):
-        r"""Send the AT command followed by the '=?\r' characters to the modem.
-        
-        Returns:
-            List of strings.
-        """
-        self.modem.ctrl_port.read_waiting()
-        return self.modem.ctrl_port.send_at(self.cmd, '=?', self.prefixed)
+        return self._exe('=?')
 
 
+"""Boilerplate for most methods based on Command.run/get/dsc/set()"""
 def _common_run(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.run()."""
-    info_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = info_cmd.run()
-        return data
+        return cmd.run()
     finally:
         modem.ctrl_lock.release()
 
 def _common_get(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.get()."""
-    data_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = data_cmd.get()
-        return data
+        return cmd.get()
     finally:
         modem.ctrl_lock.release()
 
 def _common_dsc(modem, at_cmd, prefixed=True):
-    """Boilerplate for most methods based on Command.dsc()."""
-    data_cmd = Command(modem, at_cmd, prefixed)
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = data_cmd.dsc()
-        return data
+        return cmd.dsc()
     finally:
         modem.ctrl_lock.release()
 
 def _common_set(modem, at_cmd, value, prefixed=True):
-    """Boilerplate for most methods based on Command.set()."""
+    cmd = Command(modem, at_cmd, prefixed)
     modem.ctrl_lock.acquire()
     try:
-        data = Command(modem, at_cmd, prefixed).set(value)
-        return data
+        return cmd.set(value)
     finally:
         modem.ctrl_lock.release()
 
@@ -130,9 +92,9 @@ class InteractiveCommands(object):
         """
         self.ctrl_lock.acquire()
         try:
-            self.ctrl_port.write('AT+CMGS="%s"\r\n' % number)
+            self.ctrl_port.write(('AT+CMGS="%s"\r\n' % number).encode())
             # Perform a SIM test first.
-            self.ctrl_port.write(contents+chr(26))
+            self.ctrl_port.write((contents+chr(26)).encode())
             result = self.ctrl_port.return_data()
             # A text number is an integer number, returned in the
             # last returned entry of the result, just after the ": " part.
@@ -158,7 +120,7 @@ class InteractiveCommands(object):
         try:
             message_lister = Command(self, '+CMGL')
             messages_data = message_lister.set('"%s"' % message_type)
-            return _enlist_data(messages_data, 4)
+            return _enlist_data(messages_data)
         finally:
             self.ctrl_lock.release()
 
@@ -183,26 +145,6 @@ class InteractiveCommands(object):
         """Delete message from the SIM."""
         msg_num_str = '%d' % message_num
         _common_set(self, '+CMGD', msg_num_str)
-
-    @deprecated
-    def del_message(self, message_num):
-        """Deprecated equivalent of sms_del."""
-        return self.sms_del(message_num)
-
-    @deprecated
-    def read_message(self, message_num):
-        """Deprecated equivalent of sms_read."""
-        return self.sms_read(message_num)
-
-    @deprecated
-    def send_text(self, number, contents):
-        """Deprecated equivalent of sms_send."""
-        return self.sms_send(number, contents)
-
-    @deprecated
-    def list_messages(self, message_type='ALL'):
-        """Deprecated equivalent of sms_list."""
-        return self.sms_list(message_type)
 
     def hangup(self):
         """Hang up."""
@@ -237,25 +179,6 @@ class InteractiveCommands(object):
         """Clear out a phonebook entry."""
         _common_set(self, '+CPBW', '%d' % index)
 
-    @deprecated
-    def find_pbent(self, query=''):
-        """Deprecated equivalent of pbent_find."""
-        return self.pbent_find(query)
-
-    @deprecated
-    def read_pbent(self, start_index, end_index=None):
-        """Deprecated equivalent of pbent_list."""
-        return self.pbent_read(start_index, end_index)
-
-    @deprecated
-    def del_pbent(self, index):
-        """Deprecated equivalent of pbent_del."""
-        return self.pbent_del(index)
-
-    @deprecated
-    def write_pbent(self, index, number, text, numtype=145):
-        """Deprecated equivalent of pbent_write."""
-        return self.pbent_write(index, number, text, numtype)
 
 class ShowCommands(object):
     """Show methods extract static read-only data."""
@@ -283,7 +206,7 @@ class ShowCommands(object):
     def show_hardcoded_operators(self):
         """List operators hardcoded on the device."""
         hard_ops_list = _common_run(self, '+COPN')
-        data = dict()
+        data = {}
         for entry in hard_ops_list:
             num, op_name = [item[1:-1] for item in entry.split(',', 1)] 
             data[num] = op_name
@@ -347,7 +270,7 @@ class EnterCommands(object):
             active_set = active
         if not inactive_set:
             inactive_set = inactive
-
+        
         if status is None:
             result = _common_get(self, command)[0]
             return result == active
@@ -368,16 +291,6 @@ class EnterCommands(object):
         """Enable, disable or find out about current mode."""
         return self._common_enable('+CMGF', '1', '0', status)
 
-    @deprecated
-    def enter_text_mode(self):
-        """Enter text mode."""
-        _common_set(self, '+CMGF', '1')
-
-    @deprecated
-    def enter_pdu_mode(self):
-        """Enter PDU mode."""
-        _common_set(self, '+CMGF', '0')
-
 class GetCommands(object):
     """Get methods read dynamic or user-set data."""
 
@@ -386,13 +299,13 @@ class GetCommands(object):
         active_ops = _common_dsc(self, '+COPS')
         bracket_group = re.compile('\(.+?\)')
         if active_ops:
-            data = list()
+            data = []
             network_data_list = bracket_group.findall(active_ops[0])
             for network_data_set in network_data_list:
                 unbracketed_set = network_data_set[1:-1]
-                items = unbracketed_set.split(',')
+                items = csv_ls(unbracketed_set)
                 if len(items) == 5:
-                    transformed_set = [_transform(ni) for ni in items]
+                    transformed_set = [safe_int(ni) for ni in items]
                     data.append(transformed_set)
             return data
 
@@ -402,9 +315,7 @@ class GetCommands(object):
 
     def get_service_center(self):
         """Show service center number."""
-        sc_data = _common_get(self, '+CSCA')[0].split(',', 1)
-        service_center, sc_type_num = [_transform(item) for item in sc_data]
-        return service_center, sc_type_num
+        return csv_ls(_common_get(self, '+CSCA')[0])
 
     def get_detailed_error(self):
         """Print detailed error message."""
@@ -417,54 +328,39 @@ class GetCommands(object):
         return int(rssi[0])
 
     def get_pin_status(self):
-        """Inform about PIN status.
-        
-        Returns:
-            'READY' -- sim card ready to use,
-            'SIM PIN' -- PIN required,
-            'SIM PUK' -- PUK required.
-        """
+        """Inform about PIN status."""
         pin_info = _common_get(self, '+CPIN')[0]
-        return pin_info
+        return {
+            'READY': 'Sim card ready to use',
+            'SIM PIN': 'PIN required',
+            'SIM PUK': 'PUK required'
+        }[pin_info]
 
     def get_pdp_context(self):
         """Read PDP context entries."""
         pdp_context_data = _common_get(self, '+CGDCONT')
-        data = _enlist_data(pdp_context_data)
-        return data
-
+        return _enlist_data(pdp_context_data)
+    
     @deprecated
     def get_mode(self):
-        """Get current mode.
-        
-        Returns:
-            0 -- PDU mode,
-            1 -- Text mode.
-        """
+        """Get current mode."""
         current_mode = _common_get(self, '+CMGF')[0]
-        return int(current_mode)
+        return {
+            0: 'PDU mode',
+            1: 'Text mode'
+        }[int(current_mode)]
 
+def safe_int(x):
+    if x.startswith('+') or x.startswith('0') or len(x) > 9:
+        return x
+    try:
+        return int(x)
+    except ValueError:
+        return x
 
-def _transform(pdp_item):
-    """Return a string if pdp_item starts with quotes or integer otherwise."""
-    if pdp_item:
-        if pdp_item.startswith('"'):
-            return pdp_item[1:-1]
-        else:
-            return int(pdp_item)
-    else:
-        return ''
+def csv_ls(s):
+    return [x for x in csv.reader([s])][0]
 
-def _enlist_data(string_list, max_split=None):
+def _enlist_data(data):
     """Transform data strings into data lists and return them."""
-    entries_list = list()
-    if max_split:
-        for entry in string_list:
-            entry_list = [_transform(item) for item 
-                          in entry.split(',', max_split)]
-            entries_list.append(entry_list)
-    else:
-        for entry in string_list:
-            entry_list = [_transform(item) for item in entry.split(',')]
-            entries_list.append(entry_list)
-    return entries_list
+    return [[safe_int(x) for x in csv_ls(s)] for s in data]
