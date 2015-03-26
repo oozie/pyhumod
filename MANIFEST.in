@@ -1,0 +1,9 @@
+include MANIFEST.in
+include LICENSE.rst
+include README.rst
+include INSTALL.rst
+recursive-include docs *
+recursive-include conf *
+recursive-include humod *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
