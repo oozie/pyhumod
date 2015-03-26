@@ -7,6 +7,8 @@ Most of the mobile devices implement an ``AT+CLAC`` command. It outputs a list o
 
 You can list the AT commands that your device supports in the following way:
 
+.. code:: python
+
     >>> import humod
     >>> from humod.at_commands import Command
     >>> m = humod.Modem()
@@ -38,6 +40,8 @@ Let's take the ``AT^SN`` command as an example. The command only supports the **
 
 You can use the the ``Command`` class in order to extract the serial number into a Python object. 
 
+.. code:: python
+
     >>> show_sn = Command(m, '^SN')
     >>> show_sn.run()
     ['1234567890...']
@@ -53,7 +57,10 @@ Sample command with unprefixed output
 -------------------------------------
 By default, any method of the Command class instance will only accept output prefixed with the AT-command + colon + space combination (i.e. ``'^SN: '``). This behaviour can be altered by specifying ``prefixed=False`` during Command class instanciation. 
 The class of ``AT+GM[IMR]`` commands return unprefixed output, i.e. each line returned from the modem is the actual output value and should not be stripped any further. 
-Let's implement ``AT+GMM`` from scratch. 
+Let's implement ``AT+GMM`` from scratch.
+
+.. code:: python
+
     >>> show_model = Command(m, '+GMM', prefixed=False)
     >>> show_model.run()
     ['E270']
@@ -67,6 +74,8 @@ Sample value setter/getter
 --------------------------
 In this example we will use the ``+CMGF`` AT command which is responsible for switching between the Text and PDU modes. To see which mode we are in, we should query the modem with the ``.get()`` method of Command class instance. 
 In order to switch between modes, the ``.set()`` method of the same instance must be used. If we set ``+CMGF``'s value to 1 it means we are just entered the Text mode. A value of 0 reflects PDU mode.
+
+.. code:: python
 
     >>> mode_cmd = Command(m, '+CMGF')
     >>> set_mode = mode_cmd.set
@@ -98,7 +107,9 @@ A **message** is a string, here are some examples of messages that are sent to c
     ...
 
 An **action** is a predefined Python function of the following format: 
-::
+
+.. code:: python
+
     def <action_name>(modem, message):
         """<Docstring.>"""
         <code>
@@ -107,7 +118,9 @@ Matching patterns to actions
 ----------------------------
 While running, the ``prober`` matches **patterns** to **actions** by checking if a **message** matches predefined regex. If it does, the action associated with the regex is executed.  
 A **pattern-action** combo is a Python tuple consisting of a compiled regex and an **action** function respectively.
-::
+
+.. code:: python
+
     sample_pattern = re.compile(pattern_string)
     def samlpe_action(modem, message):
         sample_code(message)
@@ -116,7 +129,9 @@ A **pattern-action** combo is a Python tuple consisting of a compiled regex and 
 Feeding the pattern-action list to ``prober``
 ---------------------------------------------
 The ``prober`` becomes aware of your predefined pattern-actions list when it is started with the list as its argument.
-::
+
+.. code:: python
+
     pa_list = [sample_combo1, sample_combo2]
     modem_instance.prober.start(pa_list)
 
@@ -131,10 +146,13 @@ The ``prober`` becomes aware of your predefined pattern-actions list when it is 
 | ``cmd = Command(m, '+CUSD=1', prefixed=False)`` then
 | ``cmd.set("**131#")`` gives an error.
 
+
 **Answer**
 
 The reply comes from the control port so you have to write a regex and compile it then parse to modem.prober.start. I got it working using: 
-::
+
+.. code:: python
+
     def new_bal(modem, message):
         print(message)
     ussd_ex = re.compile(r'^\+CUSD:.')
