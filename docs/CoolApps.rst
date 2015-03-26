@@ -5,7 +5,8 @@ sms_exec.py
 -----------
 The program executes remote commands sent in via SMS and replies with the command output.
 
-.. code-block:: python
+.. code:: python
+
     #!/usr/bin/env python
     # sms_exec.py
     # A sample application
