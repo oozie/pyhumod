@@ -1,5 +1,3 @@
-"""Setup file for PyHumod package."""
-
 import os
 from distutils.core import setup
 from humod import __version__, __author__
@@ -11,7 +9,7 @@ except OSError:
     CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod']),
                     ('/etc/ppp/options', ['conf/options'])]
 
-setup(name='pyhumod',
+setup(name='humod',
       version=__version__,
       packages=['humod'],
       description='Access SMS, GSM and 3G features of Huawei and '
