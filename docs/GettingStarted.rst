@@ -1,4 +1,4 @@
-Getting Started
+Getting started
 ===============
 
 Installation
@@ -12,9 +12,9 @@ The installation of the package takes place in four steps: downloading the sourc
     $ cd download
     $ sudo python setup.py install
 
-Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html>`_ to talk to HAL. pySerial is a required dependency, dbus-python can be installed if you want to take advantage of the humod.detect module. 
+Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html>`_ to talk to HAL. **pySerial** is a required dependency, **dbus-python** can be installed if you want to take advantage of the ``humod.detect`` module. 
 
-Usage Guide
+Usage guide
 -----------
 Once installed, you can write your own scripts or this package from an interpreter. In both cases Python requires you to import humod first. 
 
@@ -33,7 +33,7 @@ An example script could look as follows:
 
 Using a Python interpreter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Most of the examples here are run from the standard python interpreter, but you are welcome to use ipython.
+Most of the examples here are run from the standard python interpreter, but you are welcome to use iPython.
 
 .. code:: python
 
@@ -46,7 +46,7 @@ Most of the examples here are run from the standard python interpreter, but you 
 
 Instantiating a ``Modem()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The key task that must be accomplished every time you want to talk to the modem is to instantiate a Modem() class. In order for instatiation to suceed you must know where the required data and control ports are. For most Linux users the data port will be located in ``/dev/ttyUSB0`` and the control port in ``/dev/ttyUSB1`` and these are the values that the Modem() class defaults to. Custom values for data and control ports can be passed to the Modem() class as the first and the second argument respectively. In other words, the statement::
+The key task that must be accomplished every time you want to talk to the modem is to instantiate a ``Modem()`` class. In order for instatiation to suceed you must know where the required data and control ports are. For most Linux users the data port will be located in ``/dev/ttyUSB0`` and the control port in ``/dev/ttyUSB1`` and these are the values that the Modem() class defaults to. Custom values for data and control ports can be passed to the ``Modem()`` class as the first and the second argument respectively. In other words, the statement:
 
 .. code:: python
 
