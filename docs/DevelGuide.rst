@@ -122,7 +122,7 @@ A **pattern-action** combo is a Python tuple consisting of a compiled regex and 
 .. code:: python
 
     sample_pattern = re.compile(pattern_string)
-    def samlpe_action(modem, message):
+    def sample_action(modem, message):
         sample_code(message)
         sample_combo = (sample_pattern, sample_action)
 
