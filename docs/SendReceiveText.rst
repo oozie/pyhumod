@@ -34,7 +34,7 @@ To read a messages, call the ``sms_read()`` method with message ID as an argumen
 .. code:: python
 
     >>> modem.sms_read(0)
-    'Result out this evening. Gud luck'
+    'Result out this evening. Good luck'
 
 Deleting texts
 --------------
@@ -49,7 +49,7 @@ New message notifications
 By default new message notifications are not enabled. There are two steps to enable NMI:
 
 1. Start the prober service
-2. Call enable_nmi() method with True as argument
+2. Call ``enable_nmi()`` method with ``True`` as argument
 
 .. code:: python
 
@@ -87,7 +87,7 @@ Wondering how I can select messages based on sender? So far used message ID but 
 
 **Answer**
 
-I think that should do::
+I think that should do:
 
 .. code:: python
 

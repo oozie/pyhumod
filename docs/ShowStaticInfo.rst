@@ -3,9 +3,9 @@ Extracting static information from the device
 
 **Static information** can't be easily modified or changed; a change most likely follows some firmware update. Most 3G modems implement a number of standarized AT Hayes commands for reading static information about the device.  
 
-The ``show_\*`` methods
+The ``show_*`` methods
 ======================
-The ``show_*`` methods implemented in the Modem class are responsible for extracting static information from the device. None of the ``show_\*`` methods takes external arguments. 
+The ``show_*`` methods implemented in the Modem class are responsible for extracting static information from the device. None of the ``show_*`` methods takes external arguments. 
 
 show_manufacturer()
 -------------------
@@ -23,7 +23,7 @@ Returns a string containing the device model.
 .. code:: python
  
     >>> modem.show_model()
-    'E270'</pre>
+    'E270'
 
 show_revision()
 ---------------
