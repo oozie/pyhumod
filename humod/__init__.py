@@ -9,7 +9,7 @@ Modules:
 """
 
 __author__ = 'Slawek Ligus <root@ooz.ie>'
-__version__ = '0.04'
+__version__ = '0.4'
 
 import humod.at_commands
 import humod.errors
