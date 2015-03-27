@@ -50,5 +50,5 @@ See also `Development Guide <docs/DevelGuide.rst>`_.
 - `Install <INSTALL.rst>`_
 - `Docs <docs/GettingStarted.rst>`_
 - `License <LICENSE.rst>`_
-- `Blog <https://pyhumod.ooz.ie>`_
+- `Blog <http://pyhumod.ooz.ie>`_
 - `Home <https://github.com/oozie/pyhumod>`_
