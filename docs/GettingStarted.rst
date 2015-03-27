@@ -3,14 +3,16 @@ Getting started
 
 Installation
 ------------
-The installation of the package takes place in four steps: downloading the source, extracting it and system-wide installation on the elevated priviledges. The following should work for most Unix derivatives.
+Using pip::
 
-.. code:: shell
+    sudo -H pip install git+git://github.com/oozie/pyhumod.git
 
-    $ wget https://github.com/oozie/pyhumod/archive/master.zip
-    $ unzip master.zip
-    $ cd download
-    $ sudo python setup.py install
+Alternatively download the source, extract and install system-wide using sudo. The following should work for most Unix derivatives::
+
+    wget https://github.com/oozie/pyhumod/archive/master.zip
+    unzip master.zip
+    cd download
+    sudo python setup.py install
 
 Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html>`_ to talk to HAL. **pySerial** is a required dependency, **dbus-python** can be installed if you want to take advantage of the ``humod.detect`` module. 
 
