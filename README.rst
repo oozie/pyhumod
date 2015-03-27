@@ -25,14 +25,10 @@ Supported features
 
 See also `Development Guide <docs/DevelGuide.rst>`_.
 
-
 ------
 
-- `Installation <INSTALL.rst>`_
-- `Documentation <docs/GettingStarted.rst>`_
+- `Install <INSTALL.rst>`_
+- `Docs <docs/GettingStarted.rst>`_
 - `License <LICENSE.rst>`_
-
-------
-
-- http://pyhumod.googlecode.com/ - Project Homepage on Google Code (Legacy)
-- http://pyhumod.ooz.ie          - PyHumod central
+- `Blog <https://pyhumod.ooz.ie>`_
+- `Home <https://github.com/oozie/pyhumod>`_
