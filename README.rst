@@ -1,8 +1,11 @@
+.. image:: https://raw.githubusercontent.com/oozie/pyhumod/master/docs/logo.png
+   :align: left
+
 SMS, GSM and 3G connectivity using Huawei modems in Python
 ==========================================================
 Access SMS, GSM and 3G features of Huawei and compatible modems from your own apps via clean and pragmatic Python API.
 
-For a kick-start see the `Getting Started <docs/GettingStarted.rst>`_ or `sample apps <docs/CoolApps.rst>`_. 
+For a kick-start see `getting started <docs/GettingStarted.rst>`_ or `sample apps <docs/CoolApps.rst>`_. 
 
 Supported features
 ------------------
