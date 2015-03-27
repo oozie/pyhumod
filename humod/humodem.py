@@ -2,8 +2,10 @@
 
 import serial
 import threading
-try: import Queue as queue
-except ImportError: import queue
+try:
+    import Queue as queue
+except ImportError:
+    import queue
 import time
 import os
 from humod import errors

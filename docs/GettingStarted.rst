@@ -16,7 +16,7 @@ Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ 
 
 Usage guide
 -----------
-Once installed, you can write your own scripts or this package from an interpreter. In both cases Python requires you to import humod first. 
+Once installed, you can write your own scripts or this package from an interpreter. In both cases you need to ``import humod`` first and then instantiate a ``Modem()`` (**see OS specific intro below**). 
 
 Writing your own scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,6 +63,16 @@ but some MacOS X users may want to execute the following:
 .. code:: python
 
     m = humod.Modem('/dev/cu.HUAWEIMobile-Modem', '/dev/cu.HUAWEIMobile-Pcui')
+    # or
+    m = humod.Modem('/dev/tty.HUAWEIMobile-Modem', '/dev/tty.HUAWEIMobile-Pcui')
+
+If unsure, check
+
+.. code:: shell
+
+    ls -l /dev/
+
+and see what changes when you plug and unplug your USB modem.
 
 Next: You can now try to `connect to or disconnect from <ConnectDisconnect.rst>`_ the 3G network.
 ---------------------------

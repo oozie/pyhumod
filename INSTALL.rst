@@ -7,7 +7,8 @@ Install from the latest source code::
     $ cd pyhumod
     $ sudo python setup.py install
  
-Notes
------
-It's important that the ``conf/humod`` file is copied to ``/etc/ppp/peers``, 
+** Note**: To detect your modem copy ``conf/humod`` to ``/etc/ppp/peers``, 
 otherwise the ``Modem.connect()`` method will fail.
+
+Next: `getting started <docs/GettingStarted.rst>`_.
+------------------
