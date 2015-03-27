@@ -1,5 +1,4 @@
 .. image:: https://raw.githubusercontent.com/oozie/pyhumod/master/docs/logo.png
-   :align: right
 
 SMS, GSM and 3G connectivity using Huawei modems in Python
 ==========================================================
@@ -9,7 +8,7 @@ For a kick-start see `getting started <docs/GettingStarted.rst>`_ or a `sample a
 
 Clean API
 =========
-When finished getting started for most users the following should work:
+When finished getting started the following should work for most users:
 
 .. code:: python
 
