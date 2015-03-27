@@ -1,4 +1,5 @@
 from humod import at_commands as atc
+from humod.GSM0338 import gsm0338_mapping
 from datetime import datetime
 
 seq = lambda p, s=2: [p[i*s:(i+1)*s] for i in range(int((len(p)+1)/s))]
@@ -89,9 +90,9 @@ def is_gsm_encoded(message):
     return True
 
 def decode_gsm(message):
-    lines = open('GSM0338.txt').read().split('\n')
-    parsed = [l[2:].split('\t') for l in lines if l and not l.startswith('#')]
-    key = dict([(a, chr(int(b, 0))) for a,b,c,d in parsed])
+    """ Tiny naive translation. For a proper codec try:
+    https://github.com/dsch/gsm0338"""
+    key = {a[2:]: chr(int(b, 0)) for a,b in gsm0338_mapping.items()}
     done = ''.join([key.get(x, '') for x in seq(message)])
     return done.replace('@', '')
 
