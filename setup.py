@@ -1,6 +1,6 @@
 import os
 from distutils.core import setup
-from humod import __version__, __author__
+from humod import __version__
 
 CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod'])]
 try:
@@ -11,10 +11,10 @@ except OSError:
 
 setup(name='humod',
       version=__version__,
-      author=__author__,
       packages=['humod'],
       description='Access SMS, GSM and 3G features of Huawei and '
                   'compatible modems via clean and pragmatic Python API',
+      author='Slawek Ligus, František Malina',
       author_email='root@ooz.ie',
       url='https://github.com/oozie/pyhumod',
       license='BSD',
