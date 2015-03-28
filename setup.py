@@ -11,10 +11,10 @@ except OSError:
 
 setup(name='humod',
       version=__version__,
+      author=__author__,
       packages=['humod'],
       description='Access SMS, GSM and 3G features of Huawei and '
                   'compatible modems via clean and pragmatic Python API',
-      author='Slawek Ligus',
       author_email='root@ooz.ie',
       url='https://github.com/oozie/pyhumod',
       license='BSD',

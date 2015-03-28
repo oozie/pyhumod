@@ -8,7 +8,7 @@ Modules:
     humodem - the Modem() class and it's dependencies.
 """
 
-__author__ = 'Slawek Ligus <root@ooz.ie>'
+__author__ = 'Slawek Ligus, František Malina'
 __version__ = '0.4'
 
 import humod.at_commands
