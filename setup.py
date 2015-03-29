@@ -10,7 +10,7 @@ except OSError:
     CONFIG_FILES = [('/etc/ppp/peers', ['conf/humod']),
                     ('/etc/ppp/options', ['conf/options'])]
 
-setup(name='humod',
+setup(name='pyhumod',
       version=__version__,
       packages=['humod'],
       description='Access SMS, GSM and 3G features of Huawei and '
