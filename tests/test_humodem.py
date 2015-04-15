@@ -1,5 +1,10 @@
+import sys
 import unittest
-from mock import Mock
+try:
+    from mock import Mock
+except ImportError:
+    from unittest.mock import Mock
+    from imp import reload
 import serial
 import humod
 
@@ -15,7 +20,10 @@ class MockSerial(serial.serialutil.SerialBase):
         return sum(len(s) for s in self.payload)
 
     def readline(self):
-        return self.payload.pop(0)
+        line = self.payload.pop(0)
+        if sys.version_info >= (3, 0):
+            line = bytes(line, 'utf-8')
+        return line
 
 
 class TestHumod(unittest.TestCase):
