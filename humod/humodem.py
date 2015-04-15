@@ -176,7 +176,7 @@ class ModemPort(serial.Serial):
                 
             # Check for errors and raise exception with specific error code.
             errors.check_for_errors(input_line)
-            if input_line == 'OK':
+            if input_line == 'OK' and self.inWaiting() == 0:  # Final 'OK\r\n'
                 return data
             # Append only related data (starting with "command" contents).
             if command:
