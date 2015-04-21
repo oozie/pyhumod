@@ -351,6 +351,8 @@ class GetCommands(object):
         }[int(current_mode)]
 
 def safe_int(x):
+    if x=='0':
+        return 0
     if x.startswith('+') or x.startswith('0') or len(x) > 9:
         return x
     try:
