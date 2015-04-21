@@ -353,6 +353,7 @@ class GetCommands(object):
 def safe_int(x):
     if x=='0':
         return 0
+    # quacks like a phone number
     if x.startswith('+') or x.startswith('0') or len(x) > 9:
         return x
     try:
