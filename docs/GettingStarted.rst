@@ -16,6 +16,8 @@ Alternatively download the source, extract and install system-wide using sudo. T
 
 Please note this package requires `pySerial <http://pyserial.sourceforge.net>`_ and detect module uses `dbus-python <http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html>`_ to talk to HAL. **pySerial** is a required dependency, **dbus-python** can be installed if you want to take advantage of the ``humod.detect`` module. 
 
+Pyserial 2.7 does not play best with Python 3, use this updated port https://github.com/fmalina/pyserial.
+
 Usage guide
 -----------
 Once installed, you can write your own scripts or this package from an interpreter. In both cases you need to ``import humod`` first and then instantiate a ``Modem()`` (**see OS specific intro below**). 
