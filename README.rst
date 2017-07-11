@@ -52,3 +52,6 @@ See also `Development Guide <docs/DevelGuide.rst>`_.
 - `License <LICENSE.rst>`_
 - `Blog <http://pyhumod.ooz.ie>`_
 - `Home <https://github.com/oozie/pyhumod>`_
+
+For full enterprise texting solution using PyHumod see
+`Texting Centre <https://github.com/fmalina/texting>`_.
